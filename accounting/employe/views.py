@@ -140,7 +140,7 @@ def edit_employee(request, id):
         if form.is_valid():
             form.save()
             # Optionally add a success message using Django messages framework
-            return redirect('employee_detail', employee_id=employee.id)  # Redirect to employee detail view
+            return redirect('employee_list_view')  # Redirect to employee detail view
     else:
         form = EmployeeForm(instance=employee)
     
@@ -257,7 +257,7 @@ def last_month_attendance(request):
 
 
 @login_required
-def attendance_view(request):
+def attendance_views(request):
     from_date = request.GET.get('from_date')
     to_date = request.GET.get('to_date')
 

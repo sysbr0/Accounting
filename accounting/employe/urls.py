@@ -20,7 +20,7 @@ urlpatterns = [
     path('today/add/' , views.add_today , name="add_today"),
     path('last/weak/' , views.last_week_attendance , name="last_week_attendance"),
     path('last/month/' , views.last_month_attendance , name="last_week_attendance"),
-    path('from/to/', views.attendance_view, name='attendance'),
+    path('from/to/', views.attendance_views, name='attendance_from_to'),
 
 
 
