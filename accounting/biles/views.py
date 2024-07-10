@@ -679,7 +679,7 @@ def add_costomer(request):
               # Redirect to a list of clients or another page
     else:
         form = CostomersFormAdvanv()
-    return render(request, 'Costomers/add.html', {'form': form})
+    return render(request, 'costomers/add.html', {'form': form})
 
 
 
