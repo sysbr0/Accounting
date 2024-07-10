@@ -3,6 +3,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
 SECRET_KEY = "django-insecure-s^(bb6+=(mpboay^a5-nl@&+iqx0q9#u-^j=@++9u)*@2(ocxj"
 DEBUG = True
 ALLOWED_HOSTS = []
@@ -54,12 +55,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'accounting.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+#DATABASES = {
+  #  'default': {
+  #      'ENGINE': 'django.db.backends.sqlite3',
+ #       'NAME': BASE_DIR / 'db.sqlite3',
+ #   }}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -94,3 +94,20 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 
+# Add these at the top of your settings.py
+
+# Replace the DATABASES section of your settings.py with this
+# Replace the DATABASES section of your settings.py
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'sysbrdb',
+        'USER': 'sysbrdb_owner',
+        'PASSWORD': 'WuGMor5x6SOv',
+        'HOST': 'ep-plain-grass-a5jeys3z.us-east-2.aws.neon.tech',
+        'PORT': '5432',
+        'OPTIONS': {
+            'sslmode': 'require',
+        },
+    }
+}

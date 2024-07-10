@@ -26,6 +26,7 @@
             <th>TC</th>
             <th>Title</th>
             <th>Created At</th>
+            <th>action</th>
           </tr>
         </thead>
         <tbody>
@@ -37,6 +38,9 @@
             <td>{{ employee.tc }}</td>
             <td>{{ employee.title }}</td>
             <td>{{ employee.created_at }}</td>
+            <td>
+              <a href="{% url 'edit_employee' employee.id %}">edit</a>
+            </td>
           </tr>
           {% empty %}
           <tr>

@@ -4,7 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Attendance on {{ date }}</title>
+    <title>Attendance from {{ from_date }} to {{ to_date }}</title>
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
@@ -14,7 +14,7 @@
       body {
         font-family: Arial, sans-serif;
         background-color: #f8f9fa;
-        margin: 1px;
+        margin: 20px;
       }
 
       h1 {
@@ -29,7 +29,6 @@
         margin: 0 auto;
         background-color: #ffffff;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        padding: 20px;
       }
 
       .attendance-table th,
@@ -51,28 +50,63 @@
       .attendance-table tr:hover {
         background-color: #e9ecef;
       }
+
+      .date-form {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .date-form input {
+        margin: 5px;
+      }
+
+      .attendance-count {
+        text-align: center;
+        margin-top: 20px;
+        font-weight: bold;
+        color: #343a40;
+      }
     </style>
   </head>
   <body>
-    <h1>Attendance on {{ attendance_date }}</h1>
+    <div class="date-form">
+      <form method="get" action="">
+        <label for="from_date">From: </label>
+        <input
+          type="date"
+          id="from_date"
+          name="from_date"
+          value="{{ from_date }}"
+        />
+        <label for="to_date">To: </label>
+        <input type="date" id="to_date" name="to_date" value="{{ to_date }}" />
+        <button type="submit" class="btn btn-primary">Filter</button>
+      </form>
+    </div>
+
     <table class="attendance-table">
       <thead>
         <tr>
           <th>Employee Name</th>
-          <th>Position</th>
-          <th>Date</th>
+          <th>count</th>
         </tr>
       </thead>
       <tbody>
-        {% for attendance in attendance %}
+        {% for count in attendance_count %}
         <tr>
-          <td>{{ attendance.get_employee_name }}</td>
-          <td>{{ attendance.position }}</td>
-          <td>{{ attendance.date }}</td>
+          <td>{{count.employee__name }}</td>
+          <td>{{ count.total_days}}</td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
+
+    <div class="attendance-count">
+      <h5>Attendance from {{ from_date }} to {{ to_date }}</h5>
+
+      <h4>Total Records: {{ attendance_count|length }}</h4>
+      <h4>Attendance Summary:</h4>
+    </div>
   </body>
 </html>
 

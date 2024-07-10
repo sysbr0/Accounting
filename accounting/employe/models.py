@@ -27,17 +27,17 @@ class Employee(models.Model):
     
 
 
-    # Add other fields as necessary
+  
 
     def __str__(self):
-        return f" {self.name } اللقب {self.title}"
+        return f" {self.name } "
 
 class Attendance(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
-    date = models.DateField()
+    date = models.DateField(blank=False, null=False)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='created_attandec')
 
-    status = models.CharField(max_length=10)  # e.g., 'Present', 'Absent'
+    status = models.CharField(max_length=10 , blank=True, null=True)  # e.g., 'Present', 'Absent'
 
     def __str__(self):
         return f'{self.employee.name} - {self.date}'
@@ -48,10 +48,24 @@ class Attendance(models.Model):
 
     def get_employee_name(self):
         return self.employee.name if self.employee else "Unknown Employee"
-    
     def save(self, *args, **kwargs):
+        if not self.pk:  # Check if the instance is being created
+            # Check if there is already an attendance record for this employee on the same date
+            existing_attendance = Attendance.objects.filter(employee=self.employee, date=self.date).first()
+            if existing_attendance:
+                # If an attendance record exists, update it instead of creating a new one
+                existing_attendance.status = self.status
+                existing_attendance.save()
+                return existing_attendance
+        
+        # If no existing attendance record, proceed with normal save
         super().save(*args, **kwargs)
+        
+        # Update the employee state after saving attendance
         self.employee.update_state()
+        return self
 
+
+        
 
         

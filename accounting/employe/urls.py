@@ -13,6 +13,21 @@ urlpatterns = [
     path('add/' , views.add_employee , name="add_employe"),
     path('list/' , views.employee_list_view , name="employee_list_view"),
     path('edit/<int:id>/' , views.edit_employee , name="edit_employee"),
+        path('today/' , views.today_attaned , name="today_attaned"),
+       path('attendance/add/<int:id>/', views.add_attendance, name='add_attendance'),
+
+
+    path('today/add/' , views.add_today , name="add_today"),
+    path('last/weak/' , views.last_week_attendance , name="last_week_attendance"),
+    path('last/month/' , views.last_month_attendance , name="last_week_attendance"),
+    path('from/to/', views.attendance_view, name='attendance'),
+
+
+
+    
+        
+
+    
     
   #  path('date/', views.date_picker_view, name='date_view'),
 
