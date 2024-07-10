@@ -13,8 +13,11 @@ from datetime import date
 from .forms import EmployeeForm
 from django.contrib import messages
 from django.db.models import Count
-
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import AuthenticationForm
 from django.utils.dateparse import parse_date
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user
 
 from .models import Employee
 
@@ -61,23 +64,8 @@ def calendar_view(request):
     }
     
     return render(request, 'attendance/calendar.html', context)
-MONTH_MAPPING = {
-    'January': 1,
-    'February': 2,
-    'March': 3,
-    'April': 4,
-    'May': 5,
-    'June': 6,
-    'July': 7,
-    'August': 8,
-    'September': 9,
-    'October': 10,
-    'November': 11,
-    'December': 12,
-}
 
 def attendance_view(request, year, month, day):
-    # Construct date string in 'YYYY-MM-DD' format
     date_string = f'{year}-{month}-{day}'
     formatted_date = date(year, month, day)
 
@@ -85,9 +73,7 @@ def attendance_view(request, year, month, day):
 
         # Retrieve Attendance object or raise 404 if not found
     attendance = Attendance.objects.filter(date =formatted_date )
-    for obj in attendance:
-       print(obj)
-
+ 
 
     context = {
         'attendance': attendance,
@@ -96,6 +82,9 @@ def attendance_view(request, year, month, day):
     }
 
     return render(request, 'attendance/attendance.html', context)
+
+
+
 
 
 
@@ -112,26 +101,28 @@ def attendance_detail_view(request):
     
 
 
-
+@login_required
 def add_employee(request):
+    email = request.user.email if request.user.is_authenticated else None
+    print(email)
+
     if request.method == 'POST':
         form = EmployeeForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Employee added successfully!')
-            return redirect('employee_list_view')  # Replace with your actual URL name
-        else:
-            # If form is not valid, display error messages
-            for field, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, f'Error in {field}: {error}')
+            employee = form.save(commit=False)
+            if not employee.created_by:  # Ensure not to override if already set
+                employee.created_by = request.user.id  # Assuming you want to store the user ID
+            employee.save()
+            return redirect('employee_list_view')
     else:
         form = EmployeeForm()
 
     context = {
         'form': form,
+        'email': email
     }
     return render(request, 'employe/add.html', context)
+
 
 
 
@@ -156,6 +147,10 @@ def edit_employee(request, id):
     return render(request, 'employe/edit.html', {'form': form, 'employee': employee})
 
 
+
+
+
+@login_required
 def today_attaned(request):
      today = date.today()
      
@@ -175,13 +170,11 @@ def today_attaned(request):
 
 
 
-
-    
      return render(request, 'attendance/add_attend.html', context)
 
 
 
-
+@login_required
 def add_today(request):
     today = date.today()
     
@@ -221,7 +214,7 @@ def add_attendance(request, id):
 
 
 
-
+@login_required
 def last_week_attendance(request):
     today = date.today()
     last_week = today - timedelta(days=7)
@@ -241,7 +234,7 @@ def last_week_attendance(request):
     }
 
     return render(request, 'attendance/last_week.html', context)
-
+@login_required
 def last_month_attendance(request):
     today = date.today()
     last_month = today - timedelta(days=30)
@@ -263,7 +256,7 @@ def last_month_attendance(request):
     return render(request, 'attendance/last_month.html', context)
 
 
-
+@login_required
 def attendance_view(request):
     from_date = request.GET.get('from_date')
     to_date = request.GET.get('to_date')

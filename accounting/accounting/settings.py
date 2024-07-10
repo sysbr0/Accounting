@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'schedule',
     
 ]
+LOGIN_URL = '/accounts/login/'
 PORT = int(os.environ.get('PORT', 8000))
 
 MIDDLEWARE = [

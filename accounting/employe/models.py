@@ -10,9 +10,11 @@ class Employee(models.Model):
     age = models.IntegerField(blank=True, null=True)
     tc = models.CharField(max_length=11, blank=True, null=True, unique=True)  # Use CharField for TC    title = models.CharField(max_length=100 , blank=True, null=True)
     created_at = models.DateField(auto_now_add=True)
-    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='created_eploye')
+    created_by = models.IntegerField(null=True , blank=True)
     title = models.CharField(max_length=100, blank=True, null=True)  # Add this line
     state = models.BooleanField(default=True)  # True for active, False for inactive
+
+
     def update_state(self):
         thirty_days_ago = date.today() - timedelta(days=30)
         recent_attendances = Attendance.objects.filter(employee=self, date__gte=thirty_days_ago)
@@ -22,6 +24,10 @@ class Employee(models.Model):
             self.state = False  # Employee has not attended within the last 30 days
 
         self.save()
+    def save(self, *args, **kwargs):
+        if not self.pk:  # Only set created_by on creation, not on update
+            self.created_by = kwargs.pop('created_by', None)  # Pop the created_by user from kwargs if provided
+        super(Employee, self).save(*args, **kwargs)
 
 
     
@@ -48,6 +54,8 @@ class Attendance(models.Model):
 
     def get_employee_name(self):
         return self.employee.name if self.employee else "Unknown Employee"
+    
+
     def save(self, *args, **kwargs):
         if not self.pk:  # Check if the instance is being created
             # Check if there is already an attendance record for this employee on the same date
@@ -57,6 +65,8 @@ class Attendance(models.Model):
                 existing_attendance.status = self.status
                 existing_attendance.save()
                 return existing_attendance
+            
+            
         
         # If no existing attendance record, proceed with normal save
         super().save(*args, **kwargs)
@@ -68,4 +78,3 @@ class Attendance(models.Model):
 
         
 
-        

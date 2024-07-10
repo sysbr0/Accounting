@@ -57,7 +57,7 @@
         <tr>
           {% for day in week %}
           <td
-            {% if day == now.day and year == now.year and month == now.month %}
+            {% if day == now.day and now.year == now.year and month == now.month %}
               class="today"
             {% endif %}
           >

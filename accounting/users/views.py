@@ -41,7 +41,7 @@ def user_login(request):
             user = authenticate(request, email=email, password=password)
             if user:
                 login(request, user)
-                return redirect('index')  # Replace 'index' with your desired redirect URL
+                return redirect('user_profile')  # Replace 'index' with your desired redirect URL
             else:
                 messages.error(request, 'Invalid email or password')
     else:
