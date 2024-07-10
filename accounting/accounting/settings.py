@@ -5,8 +5,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 SECRET_KEY = "django-insecure-s^(bb6+=(mpboay^a5-nl@&+iqx0q9#u-^j=@++9u)*@2(ocxj"
-DEBUG = True
-ALLOWED_HOSTS = ["*"]
+
+DEBUG = False
+
+# settings.py
+
+ALLOWED_HOSTS = ['accounting-v5va.onrender.com', 'localhost', '127.0.0.1']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -23,6 +27,7 @@ INSTALLED_APPS = [
     'schedule',
     
 ]
+PORT = int(os.environ.get('PORT', 8000))
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
