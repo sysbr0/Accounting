@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Attendance on {{ date }}</title>
+    <style>
+      .attendance-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .attendance-table th,
+      .attendance-table td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
+      }
+      .attendance-table th {
+        background-color: #f2f2f2;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Attendance on {{ attendance_date }}</h1>
+    <table class="attendance-table">
+      <thead>
+        <tr>
+          <th>Employee Name</th>
+          <th>Position</th>
+          <th>date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for attendance in attendance %}
+        <tr>
+          <td>{{ attendance.get_employee_name}}</td>
+          <td></td>
+          <td></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>
