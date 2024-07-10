@@ -27,7 +27,14 @@ INSTALLED_APPS = [
     'schedule',
     
 ]
-LOGIN_URL = '/account/login/'
+
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://accounting-v5va.onrender.com',
+    # Add any other trusted origins as needed
+]
+
+LOGIN_URL = '/account/login'
 PORT = int(os.environ.get('PORT', 8000))
 
 MIDDLEWARE = [
