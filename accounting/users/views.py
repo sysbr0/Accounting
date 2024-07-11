@@ -52,21 +52,6 @@ def login_view(request):
 
 
 
-def user_login(request):
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            user = authenticate(request, email=email, password=password)
-            if user:
-                login(request, user)
-                return redirect('user_profile')  # Replace 'index' with your desired redirect URL
-            else:
-                messages.error(request, 'Invalid email or password')
-    else:
-        form = LoginForm()
-    return render(request, 'login/login.html', {'form': form})
 
 
 
