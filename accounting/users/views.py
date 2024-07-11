@@ -34,7 +34,7 @@ def user_signup(request):
 
 def login_view(request):
     if request.method == 'POST':
-        form = LoginForm(request, data=request.POST)
+        form = LogingForm(request, data=request.POST)
         if form.is_valid():
             email = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
@@ -43,7 +43,7 @@ def login_view(request):
                 login(request, user)
                 return redirect('user_profile')  # Replace 'home' with the name of your home page URL
     else:
-        form = LoginForm()
+        form = LogingForm()
     
     context = {
         'form': form,
