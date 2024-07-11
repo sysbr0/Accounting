@@ -184,7 +184,32 @@ def serch_result(request, id):
     else:
         message = "لم يتم تسجيل حضورك اليوم "
     
+
+
+
+
+
+    from_date = request.GET.get('from_date')
+    to_date = request.GET.get('to_date')
+
+    if from_date and to_date:
+        from_date = parse_date(from_date)
+        to_date = parse_date(to_date)
+        attendance_records = Attendance.objects.filter(date__range=[from_date, to_date] , employee=employee )
+    else:
+        attendance_records = Attendance.objects.filter(  employee=employee)
+
+    attendance_count = attendance_records.values('employee__name').annotate(total_days=Count('date')).order_by('employee__name')
+
+
+
+
     context = {
+
+        'from_date': from_date,
+        'to_date': to_date,
+        'attendance': attendance_records,
+        'attendance_count': attendance_count ,
         'employee': employee,
         'attendance_records': attendance_records,
         'message': message,
@@ -327,8 +352,7 @@ def attendance_views(request):
         'attendance_count': attendance_count
     }
     
-    print(attendance_records)  # Debug print
-    print(attendance_count)    # Debug print
+
     
     return render(request, 'attendance/from_to.html', context)
 
