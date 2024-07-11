@@ -21,4 +21,6 @@ class EmployeeForm(forms.ModelForm):
             field.widget.attrs.update({'class': 'form-control'})
 
 
+class TCForm(forms.Form):
+    tc = forms.CharField(max_length=11, label='Enter your TC number')
 

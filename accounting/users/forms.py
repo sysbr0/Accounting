@@ -33,3 +33,12 @@ class LoginForm(AuthenticationForm):
             elif not self.user_cache.is_active:
                 raise forms.ValidationError('This account is inactive.')
         return self.cleaned_data
+
+
+
+
+from django.contrib.auth.forms import AuthenticationForm
+
+class LogingForm(AuthenticationForm):
+    username = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'}))

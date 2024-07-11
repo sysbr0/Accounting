@@ -10,7 +10,7 @@ from django.shortcuts import render, get_object_or_404 , redirect
 from .models import Attendance
 from datetime import datetime
 from datetime import date
-from .forms import EmployeeForm
+from .forms import EmployeeForm ,  TCForm
 from django.contrib import messages
 from django.db.models import Count
 from django.contrib.auth import authenticate, login, logout
@@ -149,6 +149,34 @@ def edit_employee(request, id):
 
 
 
+def tc_input_view(request):
+    if request.method == 'POST':
+        form = TCForm(request.POST)
+        if form.is_valid():
+            tc = form.cleaned_data['tc']
+            # Check if the TC exists in the Employee model
+            employee = get_object_or_404(Employee, tc=tc)
+            return redirect('employee_attendance_view', employee_id=employee.id)
+    else:
+        form = TCForm()
+    
+    return render(request, 'employe/serch.html', {'form': form})
+
+
+
+def employee_attendance_view(request, employee_id):
+    employee = get_object_or_404(Employee, id=employee_id)
+    attendance_records = Attendance.objects.filter(employee=employee).order_by('-date')
+
+    context = {
+        'employee': employee,
+        'attendance_records': attendance_records,
+    }
+    
+    return render(request, 'employe/serch_result.html', context)
+
+
+
 
 @login_required
 def today_attaned(request):
@@ -281,3 +309,7 @@ def attendance_views(request):
     print(attendance_count)    # Debug print
     
     return render(request, 'attendance/from_to.html', context)
+
+
+
+

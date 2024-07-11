@@ -11,10 +11,9 @@ from .models import CustomUser
 
 # Create your views here.
 
+from django.contrib.auth.decorators import login_required
 
-def user(request):
-    return render(request , 'base.html')
-
+from .forms import LogingForm
 
 def user_signup(request):
     if request.method == 'POST':
@@ -29,6 +28,27 @@ def user_signup(request):
     else:
         form = SignupForm()
     return render(request, 'register/register.html', {'form': form})
+
+
+
+
+def login_view(request):
+    if request.method == 'POST':
+        form = LoginForm(request, data=request.POST)
+        if form.is_valid():
+            email = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(request, username=email, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('user_profile')  # Replace 'home' with the name of your home page URL
+    else:
+        form = LoginForm()
+    
+    context = {
+        'form': form,
+    }
+    return render(request, 'users/login.html', context)
 
 
 
@@ -50,7 +70,6 @@ def user_login(request):
 
 
 
-from django.contrib.auth.decorators import login_required
 
 @login_required
 def user_logout(request):

@@ -1,0 +1,10 @@
+<!-- employee_list.html -->
+{% extends 'employe.html' %} {% block content %} {% load static %}
+<div class="container">
+  <h2>Enter your TC number</h2>
+  <form method="post">
+    {% csrf_token %} {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>
+{% endblock %}
