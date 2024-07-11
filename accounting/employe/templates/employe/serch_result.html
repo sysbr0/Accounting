@@ -1,23 +1,51 @@
-<!-- employee_list.html -->
 {% extends 'employe.html' %} {% block content %} {% load static %}
 
 <div class="container">
-  <h2>Attendance Records for {{ employee.name }}</h2>
+  <style>
+    .employe {
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      max-width: 100%;
+    }
+    .check {
+      background-color: green;
+      color: #fff;
+    }
+    .no-check {
+      background-color: red;
+      color: #fff;
+    }
+  </style>
+  <div class="employe">
+    <h2>{{ employee.name }} {{employee.position }}</h2>
+
+    <h2 class="{% if checking %}check{% else %}no-check{% endif %}">
+      {{ message }}
+    </h2>
+  </div>
+
   <table class="table table-bordered">
     <thead>
       <tr>
-        <th>Date</th>
-        <th>Status</th>
+        <th class="font-bold text-center">اخر يوم مسجل</th>
+        <th class="font-bold text-center">Status</th>
+        <th class="font-bold text-center">الاسم</th>
       </tr>
     </thead>
     <tbody>
       {% for record in attendance_records %}
       <tr>
-        <td>{{ record.date }}</td>
-        <td>{{ record.status }}</td>
+        <td class="font-bold text-center">{{ record.date }}</td>
+        <td class="font-bold text-center">{{ record.status }}</td>
+        <td class="font-bold text-center">{{ employee.name }}</td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
+  <i class="fa-duotone fa-circle-check"></i>
 </div>
+
 {% endblock %}

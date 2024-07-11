@@ -156,7 +156,7 @@ def tc_input_view(request):
             tc = form.cleaned_data['tc']
             # Check if the TC exists in the Employee model
             employee = get_object_or_404(Employee, tc=tc)
-            return redirect('employee_attendance_view', employee_id=employee.id)
+            return redirect('serch_result', id=employee.id)
     else:
         form = TCForm()
     
@@ -164,16 +164,38 @@ def tc_input_view(request):
 
 
 
-def employee_attendance_view(request, employee_id):
-    employee = get_object_or_404(Employee, id=employee_id)
-    attendance_records = Attendance.objects.filter(employee=employee).order_by('-date')
 
+
+
+
+
+def serch_result(request, id):
+    today = date.today()
+    cheking  = False
+    
+    employee = get_object_or_404(Employee, id=id)
+    attendance_records = Attendance.objects.filter(employee=employee).order_by('-date')
+    attendance_today = Attendance.objects.filter(employee=employee, date=today).first()
+    
+    if attendance_today:
+        message = "لقد تم تسجيل حضورك اليوم "
+        cheking = True
+
+    else:
+        message = "لم يتم تسجيل حضورك اليوم "
+    
     context = {
         'employee': employee,
         'attendance_records': attendance_records,
+        'message': message,
+        'check' : cheking
     }
     
     return render(request, 'employe/serch_result.html', context)
+
+
+
+
 
 
 
