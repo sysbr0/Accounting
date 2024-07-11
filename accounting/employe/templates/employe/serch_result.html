@@ -59,7 +59,7 @@
   body {
     font-family: Arial, sans-serif;
     background-color: #f8f9fa;
-    margin: 20px;
+
   }
 
   h1 {
@@ -116,14 +116,14 @@
 <body>
 <div class="date-form">
   <form method="get" action="">
-    <label for="from_date">From: </label>
+    <label for="from_date">تاريخ البداية: </label>
     <input
       type="date"
       id="from_date"
       name="from_date"
       value="{{ from_date }}"
     />
-    <label for="to_date">To: </label>
+    <label for="to_date">تاريخ النهاىة  </label>
     <input type="date" id="to_date" name="to_date" value="{{ to_date }}" />
     <button type="submit" class="btn btn-primary">Filter</button>
   </form>
@@ -147,9 +147,9 @@
 </table>
 
 <div class="attendance-count">
-  <h5>Attendance from {{ from_date }} to {{ to_date }}</h5>
+  <h5>عدد الايام من التاريخ  {{ from_date }} الى تاريخ  {{ to_date }}</h5>
 
-  <h4>Total Records: {{ attendance_count|length }}</h4>
+
   <h4>Attendance Summary:</h4>
 </div>
 </body>
