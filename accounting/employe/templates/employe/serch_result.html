@@ -1,6 +1,21 @@
 {% extends 'employe.html' %} {% block content %} {% load static %}
 
+
+
+
+
+
 <div class="container">
+
+    {% load static %}
+
+   
+
+
+    
+
+
+    
   <style>
     .employe {
       color: #fff;
@@ -11,7 +26,7 @@
       max-width: 100%;
     }
     .check {
-      background-color: yellow;
+      background-color: green;
       color: #fff;
     }
     .no-check {
@@ -22,31 +37,10 @@
   <div class="employe">
     <h2>{{ employee.name }} {{employee.position }}</h2>
 
-    <h2 class="{% if checking %}check{% else %}no-check{% endif %}">
+    <h2 class="{% if check %}check{% else %}no-check{% endif %}">
       {{ message }}
     </h2>
-  </div>
-
-  <table class="table table-bordered">
-    <thead>
-      <tr>
-        <th class="font-bold text-center">اخر يوم مسجل</th>
-        <th class="font-bold text-center">Status</th>
-        <th class="font-bold text-center">الاسم</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for record in attendance_records %}
-      <tr>
-        <td class="font-bold text-center">{{ record.date }}</td>
-        <td class="font-bold text-center">{{ record.status }}</td>
-        <td class="font-bold text-center">{{ employee.name }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  <i class="fa-duotone fa-circle-check"></i>
-</div>
+ 
 
 
 <title>Attendance from {{ from_date }} to {{ to_date }}</title>
@@ -131,27 +125,125 @@
 
 <table class="attendance-table">
   <thead>
-    <tr>
-      <th>Employee Name</th>
-      <th>count</th>
+    <tr class= "font-bold text-center">
+        <th  class= "font-bold text-center">العدد</th>
+      <th  class= "font-bold text-center">الاسم</th>
+    
     </tr>
   </thead>
   <tbody>
     {% for count in attendance_count %}
-    <tr>
-      <td>{{count.employee__name }}</td>
-      <td>{{ count.total_days}}</td>
+    <tr class="black  font-bold text-center ">
+        <td class= "font-bold text-center"> {{ count.total_days}}</td>
+      <td class= "font-bold text-center">{{count.employee__name }}</td>
+    
     </tr>
     {% endfor %}
   </tbody>
 </table>
 
 <div class="attendance-count">
-  <h5>عدد الايام من التاريخ  {{ from_date }} الى تاريخ  {{ to_date }}</h5>
+  <h5>  {{ from_date }}  عدد الايام من التاريخ </h5>
 
 
-  <h4>Attendance Summary:</h4>
+  <h5>  {{ to_date }}  الى تاريخ </h5>
+
+
+
 </div>
 </body>
+
+
+
+
+
+
+
+   
+<style>
+    .todayis {
+      border: 2px solid #007bff;
+      background-color: yellow;
+      border-radius: 10%;
+    }
+    
+    .worked {
+      border: 2px solid green;
+      background-color: lightgreen;
+      border-radius: 10%;
+    }
+    
+    .calendar {
+      width: 100%;
+    }
+    
+    .navigation {
+      text-align: center;
+    }
+    
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+
+    }
+
+
+
+  .black{
+    color: #000;
+  }
+  </style>
+  <body>
+    <div class="container">
+      <div class="navigation mt-3 mb-3">
+        <a href="?year={{ prev_year }}&month={{ prev_month }}" class="btn btn-primary">الشهر السابق </a>
+        <span class="mx-2"> | </span>
+        <a href="?year={{ next_year }}&month={{ next_month }}" class="btn btn-primary">الشهر القادم </a>
+      </div>
+      <div class="employe">
+      <h4>تقويم العمل </h4>
+    </div>
+  
+      <table class="table table-bordered calendar">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col"   class="text-center">Mon</th>
+            <th scope="col" class="text-center">Tue</th>
+            <th scope="col" class="text-center">Wed</th>
+            <th scope="col" class="text-center">Thu</th>
+            <th scope="col"class="text-center">Fri</th>
+            <th scope="col"class="text-center">Sat</th>
+            <th scope="col"class="text-center">Sun</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for week in calendar %}
+          <tr class="text-center">
+            {% for day in week %}
+            <td
+              {% if day == now.day and now.year == year and now.month == month %}
+                class="todayis text-center"
+              {% elif day in attendance_days %}
+                class="worked"
+              {% endif %}
+            >
+              {% if day != 0 %}
+                <a href="#" class="btn btn-info btn-sm text-center ">
+                  {{ day }}
+                </a>
+              {% endif %}
+            </td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div class="employe">
+      <h4> اللون الاصفر هو اليوم الحالي </h4>
+      <h4> اللون الاخضر هو الايام  العمل </h4>
+      <h4> بدون لون يدل ان العامل لم يحضر</h4>
+    </div>
+</div>
+  </body>
 
 {% endblock %}

@@ -166,24 +166,97 @@ def tc_input_view(request):
 
 
 
+from django.utils import timezone
+from calendar import Calendar
 
 
-
-def serch_result(request, id):
-    today = date.today()
-    cheking  = False
+def searching_result(request, id):
+    today = timezone.now().date()
+    checking = False
     
     employee = get_object_or_404(Employee, id=id)
     attendance_records = Attendance.objects.filter(employee=employee).order_by('-date')
     attendance_today = Attendance.objects.filter(employee=employee, date=today).first()
     
     if attendance_today:
-        message = "لقد تم تسجيل حضورك اليوم "
-        cheking = True
-
+        message = "لقد تم تسجيل حضورك اليوم"
+        checking = True
     else:
-        message = "لم يتم تسجيل حضورك اليوم "
+        message = "لم يتم تسجيل حضورك اليوم"
     
+    # Get current year and month from request or default to current month
+    year = request.GET.get('year', today.year)
+    month = request.GET.get('month', today.month)
+    
+    year = int(year)
+    month = int(month)
+    
+    cal = Calendar()
+    month_days = cal.monthdayscalendar(year, month)
+
+    # Gather attendance for the entire month
+    month_start = datetime(year, month, 1)
+    month_end = month_start + timedelta(days=calendar.monthrange(year, month)[1])
+    monthly_attendance = Attendance.objects.filter(employee=employee, date__range=[month_start, month_end])
+
+    attendance_days = set(att.date.day for att in monthly_attendance)
+
+    context = {
+        'employee': employee,
+        'attendance_records': attendance_records,
+        'message': message,
+        'checking': checking,
+        'calendar': month_days,
+        'attendance_days': attendance_days,
+        'year': year,
+        'month': month,
+        'now': today,
+        'month_name': month_start.strftime('%B'),
+        'prev_year': (month_start - timedelta(days=1)).year,
+        'prev_month': (month_start - timedelta(days=1)).month,
+        'next_year': (month_end + timedelta(days=1)).year,
+        'next_month': (month_end + timedelta(days=1)).month,
+    }
+    
+    return render(request, 'employe/see.html', context)
+
+
+
+
+
+def serch_result(request, id):
+    today = timezone.now().date()
+    cheking = False
+    
+    employee = get_object_or_404(Employee, id=id)
+    attendance_records = Attendance.objects.filter(employee=employee).order_by('-date')
+    attendance_today = Attendance.objects.filter(employee=employee, date=today).first()
+    
+    if attendance_today:
+        message = "لقد تم تسجيل حضورك اليوم"
+        cheking = True
+    else:
+        message = "لم يتم تسجيل حضورك اليوم"
+    
+    # Get current year and month from request or default to current month
+    year = request.GET.get('year', today.year)
+    month = request.GET.get('month', today.month)
+    
+    year = int(year)
+    month = int(month)
+    
+    cal = Calendar()
+    month_days = cal.monthdayscalendar(year, month)
+
+    # Gather attendance for the entire month
+    month_start = datetime(year, month, 1)
+    month_end = month_start + timedelta(days=calendar.monthrange(year, month)[1])
+    monthly_attendance = Attendance.objects.filter(employee=employee, date__range=[month_start, month_end])
+
+    attendance_days = set(att.date.day for att in monthly_attendance)
+
+  
+  
 
 
 
@@ -213,7 +286,22 @@ def serch_result(request, id):
         'employee': employee,
         'attendance_records': attendance_records,
         'message': message,
-        'check' : cheking
+        'check' : cheking,
+
+        'employee': employee,
+        'attendance_records': attendance_records,
+        'message': message,
+ 
+        'calendar': month_days,
+        'attendance_days': attendance_days,
+        'year': year,
+        'month': month,
+        'now': today,
+        'month_name': month_start.strftime('%B'),
+        'prev_year': (month_start - timedelta(days=1)).year,
+        'prev_month': (month_start - timedelta(days=1)).month,
+        'next_year': (month_end + timedelta(days=1)).year,
+        'next_month': (month_end + timedelta(days=1)).month,
     }
     
     return render(request, 'employe/serch_result.html', context)
@@ -312,6 +400,7 @@ def last_week_attendance(request):
 @login_required
 def last_month_attendance(request):
     today = date.today()
+
     last_month = today - timedelta(days=30)
 
     # Filter attendance records for the last month and count the number of days each employee attended

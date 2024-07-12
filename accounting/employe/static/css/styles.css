@@ -39,3 +39,8 @@
     flex-direction: column;
     max-width: 40%;
   }
+
+
+  .black{
+    color: #000;
+  }
