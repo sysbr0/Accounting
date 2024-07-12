@@ -326,8 +326,7 @@ def today_attaned(request):
 
         # Retrieve Attendance object or raise 404 if not found
      attendance = Attendance.objects.filter(date =today )
-     for obj in attendance:
-       print(obj)
+
 
 
      context = {

@@ -56,6 +56,10 @@ class Attendance(models.Model):
         return self.employee.name if self.employee else "Unknown Employee"
     
 
+    def created_by_admin(self):
+        return self.created_by.full_name
+
+
     def save(self, *args, **kwargs):
         if not self.pk:  # Check if the instance is being created
             # Check if there is already an attendance record for this employee on the same date

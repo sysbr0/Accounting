@@ -54,21 +54,22 @@
     </style>
   </head>
   <body>
-    <h1>Attendance on {{ attendance_date }}</h1>
+    <h4>اسماء الحاضرين بتاريخ</h4>
+    <h4>{{ attendance_date }}</h4>
     <table class="attendance-table">
       <thead>
         <tr>
           <th>Employee Name</th>
           <th>Position</th>
-          <th>Date</th>
+          <th>الاسم</th>
         </tr>
       </thead>
       <tbody>
         {% for attendance in attendance %}
         <tr>
-          <td>{{ attendance.get_employee_name }}</td>
           <td>{{ attendance.position }}</td>
           <td>{{ attendance.date }}</td>
+          <td>{{ attendance.get_employee_name }}</td>
         </tr>
         {% endfor %}
       </tbody>

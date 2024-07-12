@@ -1,10 +1,15 @@
-{% extends 'employe.html' %} {% block content %} {% load static %}
+{% extends 'employeview.html' %} {% block content %} {% load static %}
 
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <title>Attendance on {{ date }}</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+
     <style>
       .attendance-table {
         width: 100%;
@@ -14,34 +19,49 @@
       .attendance-table td {
         border: 1px solid black;
         padding: 8px;
-        text-align: left;
+        text-align: center;
       }
       .attendance-table th {
         background-color: #f2f2f2;
       }
+
+      @media (max-width: 768px) {
+        .attendance-table th,
+        .attendance-table td {
+          display: block;
+          width: 100%;
+        }
+        .attendance-table th {
+          text-align: center;
+        }
+      }
     </style>
   </head>
   <body>
-    <h1>Attendance on {{ attendance_date }}</h1>
-    <table class="attendance-table">
-      <thead>
-        <tr>
-          <th>Employee Name</th>
-          <th>Position</th>
-          <th>date</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for attendance in attendance %}
-        <tr>
-          <td>{{ attendance.get_employee_name}}</td>
-          <td></td>
-          <td></td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <div class="container">
+      <h1 class="text-center my-4">Attendance on {{ attendance_date }}</h1>
+      <div class="table-responsive">
+        <table class="attendance-table table table-striped table-bordered">
+          <thead class="thead-light">
+            <tr>
+              <th class="text-center">أضيف بواسطة</th>
+              <th class="text-center">التاريخ</th>
+              <th class="text-center">الاسم</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for attendance in attendance %}
+            <tr>
+              <td class="text-center">{{ attendance.created_by_admin }}</td>
+              <td class="text-center">{{ attendance.date }}</td>
+              <td class="text-center">{{ attendance.get_employee_name }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
   </body>
 </html>
 
-{%endblock%}
+{% endblock %}
