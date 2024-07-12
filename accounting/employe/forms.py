@@ -2,6 +2,10 @@
 from django import forms
 from .models import Employee
 
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
+
+
 class EmployeeForm(forms.ModelForm):
     class Meta:
         model = Employee
@@ -21,6 +25,15 @@ class EmployeeForm(forms.ModelForm):
             field.widget.attrs.update({'class': 'form-control'})
 
 
-class TCForm(forms.Form):
-    tc = forms.CharField(max_length=11, label='Enter your TC number')
 
+
+class TCForm(forms.Form):
+    tc = forms.CharField(
+        max_length=100,
+        required=True,
+        label='',
+        widget=forms.TextInput(attrs={
+            'class': 'form-control pl-3',
+            'placeholder': 'Search'
+        })
+    )

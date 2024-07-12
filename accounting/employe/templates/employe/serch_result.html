@@ -1,4 +1,4 @@
-{% extends 'employe.html' %} {% block content %} {% load static %}
+{% extends 'employeview.html' %} {% block content %} {% load static %}
 
 
 
@@ -37,11 +37,17 @@
     }
   </style>
   <div class="employe">
-    <h2>{{ employee.name }} {{employee.position }}</h2>
 
-    <h2 class="{% if check %}check{% else %}no-check{% endif %}">
-      {{ message }}
-    </h2>
+    <ul class="map-list bordered">
+      <li  class="{% if check %}working-day text-center{% else %}no-check text-center{% endif %}"> <h5> {{ employee.name }} {{employee.position }}</h5></li>
+
+      <li class="{% if check %}working-day text-center{% else %}no-check text-center{% endif %}" > <h5>   {{ message }} </h5></li>
+
+
+    
+    </ul>
+   
+
  
 </div>
 
@@ -107,6 +113,66 @@
     font-weight: bold;
     color: #343a40;
   }
+
+
+
+
+  .date-form {
+    max-width: 600px; /* Adjust max-width as per your layout */
+    margin: auto; /* Center align the form */
+    padding: 20px;
+    background-color: #f9f9f9; /* Light gray background */
+    border: 1px solid #ddd; /* Light border */
+    border-radius: 5px; /* Rounded corners */
+  }
+  
+  .date-form form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Spacing between form elements */
+  }
+  
+  .date-form label {
+    flex: 1; /* Make labels take up equal space */
+    text-align: right; /* Right align text */
+  }
+  
+  .date-form input[type="date"],
+  .date-form button {
+    flex: 1; /* Make inputs and button take up equal space */
+    padding: 10px;
+    font-size: 16px;
+  }
+  
+  .date-form button {
+    max-width: 120px; /* Limit button width */
+    background-color: #007bff; /* Blue primary button color */
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  /* Media Query for Responsive Design */
+  @media (max-width: 768px) {
+    .date-form form {
+      flex-direction: column; /* Stack form elements vertically on smaller screens */
+    }
+  
+    .date-form label {
+      text-align: right; /* Keep labels right aligned */
+      margin-bottom: 5px; /* Add space below labels */
+    }
+  
+    .date-form input[type="date"],
+    .date-form button {
+      width: 100%; /* Full width for inputs and button */
+      max-width: none; /* Remove max-width on button */
+    }
+  }
+
+  
+
+
 </style>
 
 <div class="date-form">
@@ -117,12 +183,20 @@
       id="from_date"
       name="from_date"
       value="{{ from_date }}"
+      required
     />
-    <label for="to_date">تاريخ النهاىة  </label>
-    <input type="date" id="to_date" name="to_date" value="{{ to_date }}" />
-    <button type="submit" class="btn btn-primary">Filter</button>
+    <label for="to_date">تاريخ النهاية: </label>
+    <input
+      type="date"
+      id="to_date"
+      name="to_date"
+      value="{{ to_date }}"
+      required
+    />
+    <button type="submit" class="btn btn-primary">فلترة</button>
   </form>
 </div>
+
 
 <table class="attendance-table">
   <thead>
@@ -163,15 +237,16 @@
    
 <style>
     .todayis {
-      border: 2px solid #007bff;
+      border: 2px solid #000;
       background-color: yellow;
-      border-radius: 10%;
+      border-radius: 30%;
+
     }
     
     .worked {
       border: 2px solid green;
       background-color: lightgreen;
-      border-radius: 10%;
+      border-radius: 30%;
     }
     
     .calendar {
@@ -193,6 +268,45 @@
   .black{
     color: #000;
   }
+
+
+  
+  .map-list {
+    list-style-type: none;
+    padding-left: 0;
+  }
+  .map-list li {
+    position: relative;
+    padding: 10px;
+    margin-bottom: 10px;
+    color: black;
+    background-color: white; /* White background for list items */
+    border: 1px solid #ccc; /* Light border for clarity */
+    border-radius: 5px; /* Rounded corners for aesthetic */
+  }
+  .map-list li:before {
+    content: "\f024"; /* FontAwesome icon code for list */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 800;
+    position: absolute;
+    left: 10px; /* Adjust icon position */
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1px;
+  }
+  .map-list .current-day {
+    background-color: yellow; /* Yellow background for current day */
+  }
+  .map-list .working-day {
+    background-color: lightgreen; /* Light green background for working days */
+  }
+
+
+  .map-list .no-check {
+    background-color: red;
+    color: #fff;
+  }
+
   </style>
 
     <div class="container center">
@@ -208,13 +322,13 @@
       <table class="table table-bordered calendar ">
         <thead class="thead-dark">
           <tr>
-            <th scope="col"   class="text-center">Mon</th>
-            <th scope="col" class="text-center">Tue</th>
-            <th scope="col" class="text-center">Wed</th>
-            <th scope="col" class="text-center">Thu</th>
-            <th scope="col"class="text-center">Fri</th>
-            <th scope="col"class="text-center">Sat</th>
-            <th scope="col"class="text-center">Sun</th>
+            <th scope="col"   class="text-center">الاثنين</th>
+            <th scope="col" class="text-center">الثلاثاء</th>
+            <th scope="col" class="text-center">الأربعاء</th>
+            <th scope="col" class="text-center">الخمس</th>
+            <th scope="col"class="text-center">الجمعة </th>
+            <th scope="col"class="text-center">السبت</th>
+            <th scope="col"class="text-center">الأحد</th>
           </tr>
         </thead>
         <tbody>
@@ -229,9 +343,9 @@
               {% endif %}
             >
               {% if day != 0 %}
-                <a href="#" class="btn btn-info btn-sm text-center ">
+                <p  class="btn btn-info btn-sm text-center ">
                   {{ day }}
-                </a>
+                </p>
               {% endif %}
             </td>
             {% endfor %}
@@ -240,9 +354,14 @@
         </tbody>
       </table>
       <div class="employe">
-      <h4> اللون الاصفر هو اليوم الحالي </h4>
-      <h4> اللون الاخضر هو الايام  العمل </h4>
-      <h4> بدون لون يدل ان العامل لم يحضر</h4>
+       
+        
+        <ul class="map-list bordered">
+          <li class="current-day text-center"> <h5>اللون الأصفر هو اليوم الحالي </h5></li>
+          <li class="working-day text-center"> <h5>اللون الأخضر هو الأيام العمل </h5></li>
+          <li class="text-center"> <h5 > بدون لون يدل على أن العامل لم يحضر </h5></li>
+        </ul>
+        
     </div>
 
 </div>

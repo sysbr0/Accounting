@@ -22,6 +22,10 @@ from django.contrib.auth import get_user
 from .models import Employee
 
 
+from django.utils import timezone
+from calendar import Calendar
+
+
 
 
 from datetime import datetime, timedelta
@@ -166,11 +170,11 @@ def tc_input_view(request):
 
 
 
-from django.utils import timezone
-from calendar import Calendar
-
-
 def searching_result(request, id):
+   
+
+
+
     today = timezone.now().date()
     checking = False
     
@@ -202,6 +206,7 @@ def searching_result(request, id):
     attendance_days = set(att.date.day for att in monthly_attendance)
 
     context = {
+        'form': form , 
         'employee': employee,
         'attendance_records': attendance_records,
         'message': message,

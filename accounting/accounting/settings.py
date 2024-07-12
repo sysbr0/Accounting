@@ -26,9 +26,9 @@ INSTALLED_APPS = [
     'customers',
     'employe',
     'schedule',
+  
     
 ]
-
 
 CSRF_TRUSTED_ORIGINS = [
     'https://accounting-v5va.onrender.com',
