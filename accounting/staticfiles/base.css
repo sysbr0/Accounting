@@ -27,6 +27,10 @@
 }
 
 
+.tabling table {
+  width:90%;
+}
+
  :root {
     --blue: #007bff;
     --indigo: #6610f2;

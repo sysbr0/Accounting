@@ -25,7 +25,7 @@
       justify-content: center;
       align-items: center;
       flex-direction: column;
-      width: 99%;
+      width: 100%;
       padding : 10px;
     }
     .check {
@@ -241,7 +241,7 @@
 
   .inline {
     text-align: center; /* Center align content */
-    width: 100%; /* Take full width by default */
+    width: 90%; /* Take full width by default */
     display: flex;
     justify-content: center; /* Center content horizontally */
     align-items: center;
@@ -250,11 +250,18 @@
     flex-direction: column;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 400px) {
     .inline {
+      width: 90%;
       flex-direction: column; /* Stack content vertically on mobile */
       align-items: center; /* Center content vertically */
     }
+
+
+
+.tabling table {
+  width:80%;
+}
   }
 
 
@@ -351,7 +358,8 @@
       <h4>تقويم العمل </h4>
 
     </div>
-      <table class="table table-bordered calendar ">
+    <div class="tabling">
+      <table class="table table-bordered calendar  ">
         <thead class="thead-dark">
           <tr>
             <th scope="col"   class="text-center">الاثنين</th>
@@ -385,8 +393,8 @@
           {% endfor %}
         </tbody>
       </table>
-
-
+    </div>
+  </div>
       <div class="employe">
        
         
@@ -398,7 +406,7 @@
         
     </div>
 
-</div>
+
 </body>
 
 
