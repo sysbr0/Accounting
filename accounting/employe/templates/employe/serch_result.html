@@ -252,29 +252,31 @@
 
   @media (max-width: 400px) {
     .inline {
-      width: 90%;
+      width: 70%;
       flex-direction: column; /* Stack content vertically on mobile */
       align-items: center; /* Center content vertically */
+      justify-content: center;
     }
 
 
 
 .tabling table {
   width:80%;
+  justify-content: center;
+  align-items: center;
 }
   }
 
 
     .todayis {
-      border: 2px solid #000;
-      background-color: yellow;
+  
       border-radius: 30%;
+  
 
     }
     
     .worked {
-      border: 2px solid green;
-      background-color: lightgreen;
+  
       border-radius: 30%;
     }
     
@@ -304,6 +306,8 @@
     list-style-type: none;
     padding-left: 0;
   }
+
+  
   .map-list li {
     position: relative;
     padding: 10px;
@@ -346,56 +350,82 @@
     margin-bottom: 20px;
   }
 
-  </style>
-
-    <div class="inline">
-      <div class="navigation mt-3 mb-3">
-        <a href="?year={{ prev_year }}&month={{ prev_month }}" class="btn btn-primary">الشهر السابق </a>
-        <span class="mx-2"> | </span>
-        <a href="?year={{ next_year }}&month={{ next_month }}" class="btn btn-primary">الشهر القادم </a>
+  </style><div class="container-fluid">
+    <div class="row mt-3 mb-3 justify-content-center">
+      <div class="col-auto">
+        <div class="navigation">
+          <a href="?year={{ prev_year }}&month={{ prev_month }}" class="btn btn-primary">الشهر السابق</a>
+          <span class="mx-2"> | </span>
+          <a href="?year={{ next_year }}&month={{ next_month }}" class="btn btn-primary">الشهر القادم</a>
+        </div>
       </div>
-      <div class="employe">
-      <h4>تقويم العمل </h4>
-
     </div>
-    <div class="tabling">
-      <table class="table table-bordered calendar  ">
-        <thead class="thead-dark">
-          <tr>
-            <th scope="col"   class="text-center">الاثنين</th>
-            <th scope="col" class="text-center">الثلاثاء</th>
-            <th scope="col" class="text-center">الأربعاء</th>
-            <th scope="col" class="text-center">الخمس</th>
-            <th scope="col"class="text-center">الجمعة </th>
-            <th scope="col"class="text-center">السبت</th>
-            <th scope="col"class="text-center">الأحد</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for week in calendar %}
-          <tr class="text-center">
-            {% for day in week %}
-            <td
-              {% if day == now.day and now.year == year and now.month == month %}
-                class="todayis text-center"
-              {% elif day in attendance_days %}
-                class="worked"
-              {% endif %}
-            >
-              {% if day != 0 %}
-                <p  class="btn btn-info btn-sm text-center ">
-                  {{ day }}
-                </p>
-              {% endif %}
-            </td>
+    <div class="row justify-content-center">
+      <div class="col-auto">
+        <h4>تقويم العمل</h4>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-10 col-lg-8">
+        <table class="table table-bordered calendar text-center">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">الاثنين</th>
+              <th scope="col">الثلاثاء</th>
+              <th scope="col">الأربعاء</th>
+              <th scope="col">الخميس</th>
+              <th scope="col">الجمعة</th>
+              <th scope="col">السبت</th>
+              <th scope="col">الأحد</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for week in calendar %}
+            <tr>
+              {% for day in week %}
+              <td
+                {% if day == now.day and now.year == year and now.month == month %}
+                  class="todayis"
+                {% elif day in attendance_days %}
+                  class="worked"
+                {% endif %}
+              >
+                {% if day != 0 %}
+                  <p class="btn btn-info btn-sm mb-0">
+                    {{ day }}
+                  </p>
+                {% endif %}
+              </td>
+              {% endfor %}
+            </tr>
             {% endfor %}
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
-      <div class="employe">
+  
+  <style>
+    .todayis {
+      background-color: #ffeb3b !important; /* Highlight today */
+    }
+    .worked {
+      background-color: green !important; /* Highlight attendance days */
+    }
+    .calendar th, .calendar td {
+      padding: 0.5rem; /* Adjust padding for better fit */
+    }
+    @media (max-width: 768px) {
+      .calendar th, .calendar td {
+        padding: 0.25rem; /* Adjust padding for smaller screens */
+        font-size: 0.8rem; /* Adjust font size for smaller screens */
+      }
+    }
+  </style>
+
+  
+
+        <div class="employe">
        
         
         <ul class="map-list bordered">
