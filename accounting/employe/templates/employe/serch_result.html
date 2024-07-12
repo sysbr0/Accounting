@@ -244,6 +244,10 @@
     width: 100%; /* Take full width by default */
     display: flex;
     justify-content: center; /* Center content horizontally */
+    align-items: center;
+   
+
+    flex-direction: column;
   }
 
   @media (max-width: 768px) {
@@ -337,7 +341,7 @@
 
   </style>
 
-    <div class="container">
+    <div class="inline">
       <div class="navigation mt-3 mb-3">
         <a href="?year={{ prev_year }}&month={{ prev_month }}" class="btn btn-primary">الشهر السابق </a>
         <span class="mx-2"> | </span>
