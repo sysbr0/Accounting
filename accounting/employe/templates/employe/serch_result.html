@@ -2,7 +2,8 @@
 
 
 
-
+</head>
+<body>
 
 
 <div class="container">
@@ -41,7 +42,7 @@
       {{ message }}
     </h2>
  
-
+</div>
 
 <title>Attendance from {{ from_date }} to {{ to_date }}</title>
 <link
@@ -96,7 +97,7 @@
   }
 
   .date-form input {
-    margin: 5px;
+   
   }
 
   .attendance-count {
@@ -106,8 +107,7 @@
     color: #343a40;
   }
 </style>
-</head>
-<body>
+
 <div class="date-form">
   <form method="get" action="">
     <label for="from_date">تاريخ البداية: </label>
@@ -193,7 +193,7 @@
     color: #000;
   }
   </style>
-  <body>
+
     <div class="container">
       <div class="navigation mt-3 mb-3">
         <a href="?year={{ prev_year }}&month={{ prev_month }}" class="btn btn-primary">الشهر السابق </a>
@@ -244,6 +244,9 @@
       <h4> بدون لون يدل ان العامل لم يحضر</h4>
     </div>
 </div>
-  </body>
+</body>
+
+
+
 
 {% endblock %}

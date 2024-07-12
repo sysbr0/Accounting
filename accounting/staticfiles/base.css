@@ -719,7 +719,7 @@
   .offset-11 {
     margin-left: 91.66667%; }
   
-  @media (min-width: 576px) {
+  @media (min-width: 400px) {
     .col-sm {
       -ms-flex-preferred-size: 0;
       flex-basis: 0;
