@@ -8,12 +8,13 @@
 
 <div class="container">
 
-    {% load static %}
+    
 
    
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
-    
+
+  <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
 
 
     
@@ -24,7 +25,7 @@
       justify-content: center;
       align-items: center;
       flex-direction: column;
-      max-width: 99%;
+      width: 99%;
       padding : 10px;
     }
     .check {
@@ -236,6 +237,23 @@
 
    
 <style>
+
+
+  .inline {
+    text-align: center; /* Center align content */
+    width: 100%; /* Take full width by default */
+    display: flex;
+    justify-content: center; /* Center content horizontally */
+  }
+
+  @media (max-width: 768px) {
+    .inline {
+      flex-direction: column; /* Stack content vertically on mobile */
+      align-items: center; /* Center content vertically */
+    }
+  }
+
+
     .todayis {
       border: 2px solid #000;
       background-color: yellow;
@@ -307,9 +325,19 @@
     color: #fff;
   }
 
+
+  .navigation {
+    text-align: center;
+  }
+  
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
   </style>
 
-    <div class="container center">
+    <div class="container">
       <div class="navigation mt-3 mb-3">
         <a href="?year={{ prev_year }}&month={{ prev_month }}" class="btn btn-primary">الشهر السابق </a>
         <span class="mx-2"> | </span>
@@ -353,6 +381,8 @@
           {% endfor %}
         </tbody>
       </table>
+
+
       <div class="employe">
        
         
