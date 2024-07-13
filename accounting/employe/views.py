@@ -21,10 +21,13 @@ from django.contrib.auth import get_user
 
 from .models import Employee
 
+from django.http import HttpResponseForbidden
 
 from django.utils import timezone
 from calendar import Calendar
 
+
+from users.forms import LogingForm
 
 
 
@@ -206,7 +209,7 @@ def searching_result(request, id):
     attendance_days = set(att.date.day for att in monthly_attendance)
 
     context = {
-        'form': form , 
+     
         'employee': employee,
         'attendance_records': attendance_records,
         'message': message,
@@ -314,6 +317,25 @@ def serch_result(request, id):
 
 
 
+def employ_login_view(request):
+    if request.method == 'POST':
+        form = LogingForm(request, data=request.POST)
+        if form.is_valid():
+            email = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(request, username=email, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('today_attaned_admin')  # Replace 'home' with the name of your home page URL
+    else:
+        form = LogingForm()
+    
+    context = {
+        'form': form,
+    }
+    return render(request, 'login.html', context)
+
+
 
 
 
@@ -339,10 +361,48 @@ def today_attaned(request):
 
      return render(request, 'attendance/add_attend.html', context)
 
+@login_required
+def today_attaned_admin(request):
+     email = request.user.email if request.user.is_authenticated else None
+     today = date.today()
+     
+     
+
+        # Retrieve Attendance object or raise 404 if not found
+     attendance = Attendance.objects.filter(date =today )
+     attendance_count = attendance.count()
+
+
+
+     context = {
+        'attendance': attendance,
+        'attendance_date': today,
+        'email' : email,
+        'attendance_count' : attendance_count,
+
+    }
+
+
+
+     return render(request, 'attendance/add_attend_admin.html', context)
+
+
+@login_required
+def delete_attendance(request, id):
+    if not request.user.is_staff:
+        return HttpResponseForbidden()
+    
+    attendance = get_object_or_404(Attendance, id=id)
+    attendance.delete()
+    return redirect('today_attaned_admin')
+
+
 
 
 @login_required
 def add_today(request):
+     
+    email = request.user.email if request.user.is_authenticated else None
     today = date.today()
     
     # Retrieve employees who have not attended today
@@ -354,13 +414,16 @@ def add_today(request):
     context = {
         'employees_not_attended_today': employees_not_attended_today,
         'attendance_date': today,
+        'email' : email
     }
 
     return render(request, 'attendance/adding.html', context)
 
 
 
+@login_required
 def add_attendance(request, id):
+    email = request.user.email if request.user.is_authenticated else None
     employee = get_object_or_404(Employee, id=id)
     today = date.today()
 
@@ -401,6 +464,11 @@ def last_week_attendance(request):
     }
 
     return render(request, 'attendance/last_week.html', context)
+
+
+
+
+
 @login_required
 def last_month_attendance(request):
     today = date.today()
@@ -422,6 +490,10 @@ def last_month_attendance(request):
     }
 
     return render(request, 'attendance/last_month.html', context)
+
+
+
+
 
 
 @login_required

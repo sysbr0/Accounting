@@ -13,7 +13,7 @@ urlpatterns = [
     path('add/' , views.add_employee , name="add_employe"),
     path('list/' , views.employee_list_view , name="employee_list_view"),
     path('edit/<int:id>/' , views.edit_employee , name="edit_employee"),
-        path('today/' , views.today_attaned , name="today_attaned"),
+        path('' , views.today_attaned , name="today_attaned"),
        path('attendance/add/<int:id>/', views.add_attendance, name='add_attendance'),
 
 
@@ -24,14 +24,13 @@ urlpatterns = [
     path('search/', views.tc_input_view, name='tc_input_view'),
     
     path('employee/<int:id>/', views.serch_result, name='serch_result'),
-      
-    #path('calendar/<int:id>/', views.searching_result, name='serching_result'),
+   
+
+ path('login/', views.employ_login_view, name='employ_login_view'),
     
-
-
-
-    
-        
+  
+  path('today/' , views.today_attaned_admin , name="today_attaned_admin"),
+  path('delete-attendance/<int:id>/', views.delete_attendance, name='delete_attendance'),
 
     
     
