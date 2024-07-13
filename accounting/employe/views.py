@@ -399,7 +399,7 @@ def delete_attendance(request, id):
 
 
 
-@login_required
+
 def add_today(request):
      
     email = request.user.email if request.user.is_authenticated else None
@@ -418,6 +418,9 @@ def add_today(request):
     }
 
     return render(request, 'attendance/adding.html', context)
+
+
+
 
 
 
