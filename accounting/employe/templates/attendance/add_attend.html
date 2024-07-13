@@ -24,14 +24,19 @@
       .attendance-table th {
         background-color: #f2f2f2;
       }
+      .employee-name {
+        width: 40%;
+      }
 
       @media (max-width: 768px) {
         .attendance-table th,
         .attendance-table td {
-          width: 100%;
         }
         .attendance-table th {
           text-align: center;
+        }
+        .employee-name {
+          width: 50%;
         }
       }
     </style>
@@ -45,7 +50,7 @@
             <tr>
               <th class="text-center">أضيف بواسطة</th>
               <th class="text-center">التاريخ</th>
-              <th class="text-center">الاسم</th>
+              <th class="text-center employee-name">الاسم</th>
             </tr>
           </thead>
           <tbody>
@@ -53,7 +58,9 @@
             <tr>
               <td class="text-center">{{ attendance.created_by_admin }}</td>
               <td class="text-center">{{ attendance.date }}</td>
-              <td class="text-center">{{ attendance.get_employee_name }}</td>
+              <td class="text-center employee-name">
+                {{ attendance.get_employee_name }}
+              </td>
             </tr>
             {% endfor %}
           </tbody>
