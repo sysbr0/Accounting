@@ -340,7 +340,6 @@ def employ_login_view(request):
 
 
 
-@login_required
 def today_attaned(request):
      today = date.today()
      
@@ -399,7 +398,7 @@ def delete_attendance(request, id):
 
 
 
-
+@login_required
 def add_today(request):
      
     email = request.user.email if request.user.is_authenticated else None
