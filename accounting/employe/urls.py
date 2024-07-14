@@ -4,13 +4,16 @@ from  . import views
 
 
 urlpatterns = [
-   path('calendar/', views.calendar_view, name='calendar'),
-    path('attendance/', views.attendance_detail_view, name='attendance_detail'),
-    
+   path('calendar/', views.calendar_view, name='calendar'), #clander view 
+
+    # take the date from the clander
     path('attendance/<int:year>/<int:month>/<int:day>/', views.attendance_view, name='attendance'),
 
-
+#add new employee
     path('add/' , views.add_employee , name="add_employe"),
+
+
+
     path('list/' , views.employee_list_view , name="employee_list_view"),
     path('edit/<int:id>/' , views.edit_employee , name="edit_employee"),
         path('' , views.today_attaned , name="today_attaned"),

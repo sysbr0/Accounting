@@ -93,21 +93,6 @@ def attendance_view(request, year, month, day):
 
 
 
-
-
-
-def attendance_detail_view(request):
-    selected_date = request.GET.get('date')
-    if selected_date:
-        selected_date = datetime.strptime(selected_date, '%Y-%m-%d').date()
-        # Example data for employees who attended on the selected date
-        employees_attended = ['Employee A', 'Employee B', 'Employee C']
-        return render(request, 'attendance/attendance.html', {'employees_attended': employees_attended, 'selected_date': selected_date})
-    else:
-        return HttpResponse('No date selected.')
-    
-
-
 @login_required
 def add_employee(request):
     email = request.user.email if request.user.is_authenticated else None
