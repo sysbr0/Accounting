@@ -27,6 +27,9 @@ from django.utils import timezone
 from calendar import Calendar
 
 
+
+
+
 from users.forms import LogingForm
 
 
@@ -193,6 +196,9 @@ def searching_result(request, id):
 
     attendance_days = set(att.date.day for att in monthly_attendance)
 
+
+
+
     context = {
      
         'employee': employee,
@@ -210,6 +216,14 @@ def searching_result(request, id):
         'next_year': (month_end + timedelta(days=1)).year,
         'next_month': (month_end + timedelta(days=1)).month,
     }
+
+
+
+
+
+
+
+
     
     return render(request, 'employe/see.html', context)
 
@@ -298,6 +312,84 @@ def serch_result(request, id):
     }
     
     return render(request, 'employe/serch_result.html', context)
+
+def serch_resul(request, id):
+    today = timezone.now().date()
+    cheking = False
+    
+    employee = get_object_or_404(Employee, id=id)
+    
+    # Fetch all attendance records for the employee
+    attendance_records = Attendance.objects.filter(employee=employee).order_by('-date')
+    
+    # Check if attendance was recorded today
+    attendance_today = Attendance.objects.filter(employee=employee, date=today).first()
+    
+    if attendance_today:
+        message = "لقد تم تسجيل حضورك اليوم"
+        cheking = True
+    else:
+        message = "لم يتم تسجيل حضورك اليوم"
+    
+    # Get current year and month from request or default to current month
+    year = request.GET.get('year', today.year)
+    month = request.GET.get('month', today.month)
+    
+    year = int(year)
+    month = int(month)
+    
+    cal = Calendar()
+    month_days = cal.monthdayscalendar(year, month)
+
+    # Gather attendance for the entire month
+    month_start = datetime(year, month, 1)
+    month_end = month_start + timedelta(days=calendar.monthrange(year, month)[1])
+    monthly_attendance = Attendance.objects.filter(employee=employee, date__range=[month_start, month_end])
+
+    # Create a set of days where attendance was recorded
+    attendance_days = set(att.date.day for att in monthly_attendance)
+    
+    # Create a dictionary to store whether each day is paid or not
+    attendance_status = {}
+    for att in monthly_attendance:
+        attendance_status[att.date.day] = att.ispyed # Assuming 'paid' is a boolean field in Attendance model
+
+    from_date = request.GET.get('from_date')
+    to_date = request.GET.get('to_date')
+
+    if from_date and to_date:
+        from_date = datetime.strptime(from_date, '%Y-%m-%d').date()
+        to_date = datetime.strptime(to_date, '%Y-%m-%d').date()
+        attendance_records = Attendance.objects.filter(date__range=[from_date, to_date], employee=employee)
+    else:
+        attendance_records = Attendance.objects.filter(employee=employee)
+
+    # Aggregate attendance count per employee
+    attendance_count = attendance_records.values('employee__name').annotate(total_days=Count('date')).order_by('employee__name')
+
+    context = {
+        'from_date': from_date,
+        'to_date': to_date,
+        'attendance': attendance_records,
+        'attendance_count': attendance_count,
+        'employee': employee,
+        'attendance_records': attendance_records,
+        'message': message,
+        'check': cheking,
+        'calendar': month_days,
+        'attendance_days': attendance_days,
+        'attendance_status': attendance_status,  # Pass the dictionary to template
+        'year': year,
+        'month': month,
+        'now': today,
+        'month_name': month_start.strftime('%B'),
+        'prev_year': (month_start - timedelta(days=1)).year,
+        'prev_month': (month_start - timedelta(days=1)).month,
+        'next_year': (month_end + timedelta(days=1)).year,
+        'next_month': (month_end + timedelta(days=1)).month,
+    }
+    
+    return render(request, 'employe/serch_resul.html', context)
 
 
 

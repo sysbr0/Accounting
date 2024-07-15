@@ -27,6 +27,7 @@ urlpatterns = [
     path('search/', views.tc_input_view, name='tc_input_view'),
     
     path('employee/<int:id>/', views.serch_result, name='serch_result'),
+     path('employe/<int:id>/', views.serch_resul, name='serch_resul'),
    
 
  path('login/', views.employ_login_view, name='employ_login_view'),

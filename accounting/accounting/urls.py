@@ -27,7 +27,8 @@ urlpatterns = [
        path("account/" , include('users.urls')),
        path("biles/" , include('biles.urls')),
        path("customers/" , include('customers.urls')),
-       path('employe/', include('employe.urls'))
+       path('employe/', include('employe.urls')),
+       path('api/', include('api.urls')),
 
 
 ]

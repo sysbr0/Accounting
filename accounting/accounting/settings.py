@@ -26,6 +26,9 @@ INSTALLED_APPS = [
     'customers',
     'employe',
     'schedule',
+    'api',
+    'corsheaders',
+    'rest_framework',
   
     
 ]
@@ -39,6 +42,7 @@ LOGIN_URL = '/account/login'
 PORT = int(os.environ.get('PORT', 8000))
 
 MIDDLEWARE = [
+     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -47,7 +51,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
+CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'accounting.urls'
 AUTH_USER_MODEL = 'users.CustomUser'

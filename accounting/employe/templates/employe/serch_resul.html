@@ -1,0 +1,277 @@
+{% extends 'employeview.html' %} {% block content %} 
+{% load static %}
+{% load custom_filters %}
+
+<div class="container">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+
+  <style>
+    .employe {
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      width: 100%;
+      padding: 10px;
+    }
+    .check {
+      background-color: green;
+      color: #fff;
+    }
+    .no-check {
+      background-color: red;
+      color: #fff;
+    }
+  
+
+    .todayis {
+      background-color: yellow !important; /* Highlight today */
+    }
+    
+    .pyed {
+      background-color: blue !important; /* Highlight paid days */
+      color: #fff; /* Text color */
+    }
+    
+    .worked {
+      background-color: green !important; /* Highlight worked days */
+      color: #fff; /* Text color */
+    }
+    
+    
+  </style>
+
+  <div class="employe">
+    <ul class="map-list bordered">
+      <li class="{% if check %}working-day text-center{% else %}no-check text-center{% endif %}">
+        <h5>{{ employee.name }} {{employee.position }}</h5>
+      </li>
+      <li class="{% if check %}working-day text-center{% else %}no-check text-center{% endif %}">
+        <h5>{{ message }}</h5>
+      </li>
+    </ul>
+  </div>
+
+  <title>Attendance from {{ from_date }} to {{ to_date }}</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #343a40;
+    }
+    .attendance-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0 auto;
+      background-color: #ffffff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .attendance-table th,
+    .attendance-table td {
+      border: 1px solid #dee2e6;
+      padding: 12px 15px;
+      text-align: left;
+    }
+    .attendance-table th {
+      background-color: #343a40;
+      color: #ffffff;
+    }
+    .attendance-table tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    .attendance-table tr:hover {
+      background-color: #e9ecef;
+    }
+    .date-form {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .date-form input {
+      padding: 10px;
+      font-size: 16px;
+    }
+    .date-form button {
+      max-width: 120px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    @media (max-width: 768px) {
+      .date-form form {
+        flex-direction: column;
+      }
+      .date-form input,
+      .date-form button {
+        width: 100%;
+      }
+    }
+  </style>
+
+  <div class="date-form">
+    <form method="get" action="">
+      <label for="from_date">تاريخ البداية: </label>
+      <input type="date" id="from_date" name="from_date" value="{{ from_date }}" required/>
+      <label for="to_date">تاريخ النهاية: </label>
+      <input type="date" id="to_date" name="to_date" value="{{ to_date }}" required/>
+      <button type="submit" class="btn btn-primary">فلترة</button>
+    </form>
+  </div>
+
+  <table class="attendance-table">
+    <thead>
+      <tr class="font-bold text-center">
+        <th class="font-bold text-center">العدد</th>
+        <th class="font-bold text-center">الاسم</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for count in attendance_count %}
+      <tr class="black font-bold text-center">
+        <td class="font-bold text-center">{{ count.total_days }}</td>
+        <td class="font-bold text-center">{{ count.employee__name }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="attendance-count">
+    <h5>عدد الايام من التاريخ {{ from_date }} إلى تاريخ {{ to_date }}</h5>
+  </div>
+
+  <style>
+    .inline {
+      text-align: center;
+      width: 90%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    @media (max-width: 400px) {
+      .inline {
+        width: 70%;
+        flex-direction: column;
+      }
+    }
+    .todayis {
+      border-radius: 30%;
+    }
+    .worked {
+      border-radius: 30%;
+      background-color: #00ff00;
+    }
+    .calendar {
+      width: 100%;
+    }
+    .navigation {
+      text-align: center;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .black {
+      color: #000;
+    }
+    .map-list {
+      list-style-type: none;
+      padding-left: 0;
+    }
+    .map-list li {
+      position: relative;
+      padding: 10px;
+      margin-bottom: 10px;
+      color: black;
+      background-color: white;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .map-list li:before {
+      content: "\f024";
+      font-family: "Font Awesome 5 Free";
+      font-weight: 800;
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1px;
+    }
+    .map-list .current-day {
+      background-color: yellow;
+    }
+    .map-list .working-day {
+      background-color: lightgreen;
+    }
+    .map-list .no-check {
+      background-color: red;
+      color: #fff;
+    }
+    .navigation {
+      text-align: center;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+  </style>
+
+  <div class="inline">
+    <h1>{{ month_name }} {{ year }}</h1>
+    <div class="navigation">
+      <a href="?month={{ prev_month }}&year={{ prev_year }}">السابق</a> |
+      <a href="?month={{ next_month }}&year={{ next_year }}">التالي</a>
+    </div>
+
+    <table class="calendar table table-bordered">
+      <thead>
+        <tr>
+          <th class="text-center">الأحد</th>
+          <th class="text-center">الإثنين</th>
+          <th class="text-center">الثلاثاء</th>
+          <th class="text-center">الأربعاء</th>
+          <th class="text-center">الخميس</th>
+          <th class="text-center">الجمعة</th>
+          <th class="text-center">السبت</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for week in calendar %}
+<tr>
+  {% for day in week %}
+    <td
+    {% if day == now.day and now.year == year and now.month == month %}
+      class="todayis"
+    {% elif day in attendance_days %}
+      {% if attendance_status|key:day %}
+        class="pyed"
+      {% else %}
+        class="worked"
+      {% endif %}
+    {% else %}
+      class=""
+    {% endif %}
+    >
+      {% if day != 0 %}
+        <p class="btn btn-info btn-sm mb-0">{{ day }}</p>
+      {% endif %}
+    </td>
+  {% endfor %}
+</tr>
+{% endfor %}
+
+        
+        
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}
