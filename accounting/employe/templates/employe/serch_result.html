@@ -585,26 +585,6 @@
   
 
 
-
-  <form method="post" action="{% url 'pyment' id=employee_id x=x %}">
-    {% csrf_token %}
-    
-    <input type="hidden" name="employee_id" value="{{ employee_id }}">
-    <input type="hidden" name="x" value="{{ x }}">
-    
-    <h4>Mark Oldest {{ x }} Attendance Records as Paid:</h4>
-    <ul>
-      {% for record in oldest_attendance %}
-      <li>
-        <label>
-          <input type="checkbox" name="records_to_pay" value="{{ record.id }}"> {{ record.date }}
-        </label>
-      </li>
-      {% endfor %}
-    </ul>
-    
-    <button type="submit">Mark Paid</button>
-  </form>
   
   
 </body>
