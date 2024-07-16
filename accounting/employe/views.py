@@ -27,7 +27,7 @@ from django.utils import timezone
 from calendar import Calendar
 
 
-
+from django.urls import reverse
 
 
 from users.forms import LogingForm
@@ -232,75 +232,62 @@ def searching_result(request, id):
 
 
 def serch_result(request, id):
+    email = request.user.email if request.user.is_authenticated else None
     today = timezone.now().date()
-    cheking = False
     
     employee = get_object_or_404(Employee, id=id)
-    attendance_records = Attendance.objects.filter(employee=employee).order_by('-date')
-    attendance_today = Attendance.objects.filter(employee=employee, date=today).first()
     
+    # Get current year and month from request or default to current month
+    year = int(request.GET.get('year', today.year))
+    month = int(request.GET.get('month', today.month))
+    
+    cal = calendar.Calendar()
+    month_days = cal.monthdayscalendar(year, month)
+    
+    # Gather attendance for the entire month
+    month_start = datetime(year, month, 1)
+    month_end = month_start + timedelta(days=calendar.monthrange(year, month)[1])
+    monthly_attendance = Attendance.objects.filter(employee=employee, date__range=[month_start, month_end])
+    
+    # Create a set of days where attendance was recorded and their status
+    attendance_days = set(att.date.day for att in monthly_attendance)
+    attendance_status = {att.date.day: att.ispyed for att in monthly_attendance}
+    
+    # Check if attendance was recorded today
+    attendance_today = Attendance.objects.filter(employee=employee, date=today).first()
     if attendance_today:
         message = "لقد تم تسجيل حضورك اليوم"
         cheking = True
     else:
         message = "لم يتم تسجيل حضورك اليوم"
+        cheking = False
     
-    # Get current year and month from request or default to current month
-    year = request.GET.get('year', today.year)
-    month = request.GET.get('month', today.month)
-    
-    year = int(year)
-    month = int(month)
-    
-    cal = Calendar()
-    month_days = cal.monthdayscalendar(year, month)
-
-    # Gather attendance for the entire month
-    month_start = datetime(year, month, 1)
-    month_end = month_start + timedelta(days=calendar.monthrange(year, month)[1])
-    monthly_attendance = Attendance.objects.filter(employee=employee, date__range=[month_start, month_end])
-
-    attendance_days = set(att.date.day for att in monthly_attendance)
-
-  
-  
-
-
-
-
-
+    # Get date range from request if available
     from_date = request.GET.get('from_date')
     to_date = request.GET.get('to_date')
-
+    
     if from_date and to_date:
         from_date = parse_date(from_date)
         to_date = parse_date(to_date)
-        attendance_records = Attendance.objects.filter(date__range=[from_date, to_date] , employee=employee )
+        attendance_records = Attendance.objects.filter(date__range=[from_date, to_date], employee=employee)
     else:
-        attendance_records = Attendance.objects.filter(  employee=employee)
-
+        attendance_records = Attendance.objects.filter(employee=employee)
+    
     attendance_count = attendance_records.values('employee__name').annotate(total_days=Count('date')).order_by('employee__name')
-
-
-
-
+    unpaid_records = monthly_attendance.filter(ispyed=False)
+    peyed_record = monthly_attendance.filter(ispyed=True).order_by('-date')[:5]
     context = {
-
+        'employee': employee,
         'from_date': from_date,
         'to_date': to_date,
-        'attendance': attendance_records,
-        'attendance_count': attendance_count ,
-        'employee': employee,
+        'attendance': monthly_attendance,
         'attendance_records': attendance_records,
+        'attendance_count': attendance_count,
         'message': message,
-        'check' : cheking,
-
-        'employee': employee,
-        'attendance_records': attendance_records,
-        'message': message,
- 
+        'check': cheking,
         'calendar': month_days,
         'attendance_days': attendance_days,
+        'attendance_status': attendance_status,
         'year': year,
         'month': month,
         'now': today,
@@ -309,13 +296,68 @@ def serch_result(request, id):
         'prev_month': (month_start - timedelta(days=1)).month,
         'next_year': (month_end + timedelta(days=1)).year,
         'next_month': (month_end + timedelta(days=1)).month,
+        'unpaid_records': unpaid_records,
+        'peyed_record' : peyed_record, 
+        "email": email,
+
+
+
     }
     
     return render(request, 'employe/serch_result.html', context)
 
+
+
+
+
+
+@login_required
+def mark_as_paid(request, id):
+    attendance = get_object_or_404(Attendance, id=id)
+    attendance.ispyed = True
+    attendance.save()
+    return redirect(reverse('serch_result', kwargs={'id': attendance.employee.id}))
+
+@login_required
+def mark_as_not_pyed(request, id):
+    attendance = get_object_or_404(Attendance, id=id)
+    attendance.ispyed = False
+    attendance.save()
+    return redirect(reverse('serch_result', kwargs={'id': attendance.employee.id}))
+
+
+
+
+@login_required
+def pyment(request, id, x):
+    if request.method == 'POST':
+        # Get the employee
+        employee = get_object_or_404(Employee, id=id)
+        
+        # Fetch the oldest x attendance records for the employee
+        oldest_attendance = Attendance.objects.filter(employee=employee, ispyed=False).order_by('date')[:int(x)]
+        
+        # Process the form data to mark selected attendance records as paid
+        for attendance in oldest_attendance:
+            attendance.ispyed = True
+            attendance.save()
+        
+        # Redirect back to the search results page
+        return redirect(reverse('serch_result', kwargs={'id': id}))
+    
+    # If not a POST request, render a template or handle the GET request as needed
+    return render(request, 'employe/pyment.html', {'employee_id': id, 'x': x})
+
+
+
+
+
+
+
+
 def serch_resul(request, id):
     today = timezone.now().date()
-    cheking = False
+ 
     
     employee = get_object_or_404(Employee, id=id)
     
@@ -323,14 +365,8 @@ def serch_resul(request, id):
     attendance_records = Attendance.objects.filter(employee=employee).order_by('-date')
     
     # Check if attendance was recorded today
-    attendance_today = Attendance.objects.filter(employee=employee, date=today).first()
-    
-    if attendance_today:
-        message = "لقد تم تسجيل حضورك اليوم"
-        cheking = True
-    else:
-        message = "لم يتم تسجيل حضورك اليوم"
-    
+   
+
     # Get current year and month from request or default to current month
     year = request.GET.get('year', today.year)
     month = request.GET.get('month', today.month)
@@ -354,9 +390,7 @@ def serch_resul(request, id):
     for att in monthly_attendance:
         attendance_status[att.date.day] = att.ispyed # Assuming 'paid' is a boolean field in Attendance model
 
-    from_date = request.GET.get('from_date')
-    to_date = request.GET.get('to_date')
-
+   
     if from_date and to_date:
         from_date = datetime.strptime(from_date, '%Y-%m-%d').date()
         to_date = datetime.strptime(to_date, '%Y-%m-%d').date()
@@ -374,8 +408,8 @@ def serch_resul(request, id):
         'attendance_count': attendance_count,
         'employee': employee,
         'attendance_records': attendance_records,
-        'message': message,
-        'check': cheking,
+ 
+ 
         'calendar': month_days,
         'attendance_days': attendance_days,
         'attendance_status': attendance_status,  # Pass the dictionary to template

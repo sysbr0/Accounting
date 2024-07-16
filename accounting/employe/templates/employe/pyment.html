@@ -1,0 +1,18 @@
+<form method="post" action="{% url 'mark_oldest_as_paid' id=employee_id x=x %}">
+  {% csrf_token %}
+
+  <h4>Mark Oldest {{ x }} Attendance Records as Paid:</h4>
+
+  <ul>
+    {% for record in oldest_attendance %}
+    <li>
+      <label>
+        <input type="checkbox" name="{{ record.id }}" value="1" /> {{
+        record.date }}
+      </label>
+    </li>
+    {% endfor %}
+  </ul>
+
+  <button type="submit" class="btn btn-primary">Mark Selected as Paid</button>
+</form>

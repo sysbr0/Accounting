@@ -35,9 +35,23 @@ urlpatterns = [
   
   path('today/' , views.today_attaned_admin , name="today_attaned_admin"),
   path('delete-attendance/<int:id>/', views.delete_attendance, name='delete_attendance'),
+ path('attend/payed/<int:id>/', views.mark_as_paid, name='mark_as_paid'),
+    
+     path('attend/pyed/not/<int:id>/', views.mark_as_not_pyed, name='mark_as_not_pyed'),
+         
+
+
+
+# urls.py
+path('pyment/<int:x>/<int:id>/', views.pyment, name='pyment'),
+
+
 
     
     
   #  path('date/', views.date_picker_view, name='date_view'),
+
+
+
 
 ]

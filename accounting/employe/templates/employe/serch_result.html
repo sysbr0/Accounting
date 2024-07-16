@@ -1,5 +1,5 @@
 {% extends 'employeview.html' %} {% block content %} {% load static %}
-
+{% load custom_filters %}
 
 
 </head>
@@ -32,6 +32,11 @@
     .no-check {
       background-color: red;
       color: #fff;
+    }
+    .pyed {
+      background-color: #0eb0eb !important; /* Highlight paid days */
+
+  
     }
   </style>
   <div class="employe">
@@ -265,17 +270,6 @@
   }
 
 
-    .todayis {
-  
-      border-radius: 30%;
-  
-
-    }
-    
-    .worked {
-  
-      border-radius: 30%;
-    }
     
     .calendar {
       width: 100%;
@@ -347,7 +341,8 @@
     margin-bottom: 20px;
   }
 
-  </style><div class="container-fluid">
+  </style>
+  <div class="container-fluid">
     <div class="row mt-3 mb-3 justify-content-center">
       <div class="col-auto">
         <div class="navigation">
@@ -418,6 +413,50 @@
         font-size: 0.8rem; /* Adjust font size for smaller screens */
       }
     }
+
+
+
+
+
+    .table-responsive {
+      margin-bottom: 1.5rem;
+    }
+    
+    .table thead th {
+      vertical-align: bottom;
+      border-bottom: 2px solid #dee2e6;
+    }
+    
+    .table tbody + tbody {
+      border-top: 2px solid #dee2e6;
+    }
+    
+    .table .thead-dark th {
+      color: #fff;
+      background-color: #343a40;
+      border-color: #454d55;
+    }
+    
+    .todayis {
+      background-color: #ffeeba;
+    }
+    
+    .worked {
+      background-color: #c3e6cb;
+    }
+    
+    .pyed {
+      background-color: #f5c6cb;
+    }
+    
+    .navigation .btn {
+      margin: 0 5px;
+    }
+    
+    .text-center {
+      text-align: center;
+    }
+    
   </style>
 
   
@@ -434,7 +473,143 @@
     </div>
 
 
+
+
+
+
+  <div class="container-fluid">
+  
+    <div class="row justify-content-center">
+      <div class="col-auto">
+        <h4>تقويم الدفعات </h4>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-10 col-lg-8">
+        <table class="table table-bordered calendar text-center">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">الاثنين</th>
+              <th scope="col">الثلاثاء</th>
+              <th scope="col">الأربعاء</th>
+              <th scope="col">الخميس</th>
+              <th scope="col">الجمعة</th>
+              <th scope="col">السبت</th>
+              <th scope="col">الأحد</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for week in calendar %}
+            <tr>
+              {% for day in week %}
+                <td
+                {% if day == now.day and now.year == year and now.month == month %}
+                  class="todayis"
+                {% elif day in attendance_days %}
+                  {% if attendance_status|key:day %}
+                    class="pyed"
+                  {% else %}
+                    class="worked"
+                  {% endif %}
+                {% else %}
+                  class=""
+                {% endif %}
+                >
+                  {% if day != 0 %}
+                    <p class="btn btn-info btn-sm mb-0">{{ day }}</p>
+                  {% endif %}
+                </td>
+              {% endfor %}
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+  <div class="unpaid-records">
+    <h4 class="text-center" >قائمة مستحقات الدفع </h4>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for record in unpaid_records %}
+        <tr>
+          <td>{{ record.date }}</td>
+          <td>
+            <form action="{% url 'mark_as_paid' record.id %}" method="post">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-success">تسديد</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+
+  <div class="unpaid-records">
+    <h4 class="text-center" >قائمة اخر المدفوعات </h4>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for record in peyed_record %}
+        <tr>
+          <td>{{ record.date }}</td>
+          <td>
+            <form action="{% url 'mark_as_not_pyed' record.id %}" method="post">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger">تراجع</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  
+
+
+
+  <form method="post" action="{% url 'pyment' id=employee_id x=x %}">
+    {% csrf_token %}
+    
+    <input type="hidden" name="employee_id" value="{{ employee_id }}">
+    <input type="hidden" name="x" value="{{ x }}">
+    
+    <h4>Mark Oldest {{ x }} Attendance Records as Paid:</h4>
+    <ul>
+      {% for record in oldest_attendance %}
+      <li>
+        <label>
+          <input type="checkbox" name="records_to_pay" value="{{ record.id }}"> {{ record.date }}
+        </label>
+      </li>
+      {% endfor %}
+    </ul>
+    
+    <button type="submit">Mark Paid</button>
+  </form>
+  
+  
 </body>
+
+
 
 
 
