@@ -96,6 +96,29 @@ def attendance_view(request, year, month, day):
 
 
 
+def attendance_view_admin(request, year, month, day):
+    date_string = f'{year}-{month}-{day}'
+    formatted_date = date(year, month, day)
+
+
+
+        # Retrieve Attendance object or raise 404 if not found
+    attendance = Attendance.objects.filter(date =formatted_date )
+    count_attendance = attendance.count()
+ 
+
+    context = {
+        'attendance': attendance,
+        'attendance_date': formatted_date,
+        'date_string' :date_string,
+        "count_attendance":count_attendance
+    }
+
+    return render(request, 'attendance/attandce_admin.html', context)
+
+
+
+
 
 @login_required
 def add_employee(request):
@@ -124,7 +147,8 @@ def add_employee(request):
 
 def employee_list_view(request):
     employees = Employee.objects.all()
-    return render(request, 'employe/list.html', {'employees': employees})
+    email = request.user.email if request.user.is_authenticated else None
+    return render(request, 'employe/list.html', {'employees': employees , 'email':email})
 
 
 

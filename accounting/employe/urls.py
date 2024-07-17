@@ -9,8 +9,10 @@ urlpatterns = [
     # take the date from the clander
     path('attendance/<int:year>/<int:month>/<int:day>/', views.attendance_view, name='attendance'),
 
+
+    
+
 #add new employee
-    path('add/' , views.add_employee , name="add_employe"),
 
 
 
@@ -20,7 +22,6 @@ urlpatterns = [
        path('attendance/add/<int:id>/', views.add_attendance, name='add_attendance'),
 
 
-    path('today/add/' , views.add_today , name="add_today"),
     path('last/weak/' , views.last_week_attendance , name="last_week_attendance"),
     path('last/month/' , views.last_month_attendance , name="last_week_attendance"),
     path('from/to/', views.attendance_views, name='attendance_from_to'),
@@ -34,12 +35,6 @@ urlpatterns = [
     
   
   path('today/' , views.today_attaned_admin , name="today_attaned_admin"),
-  path('delete-attendance/<int:id>/', views.delete_attendance, name='delete_attendance'),
- path('attend/payed/<int:id>/', views.mark_as_paid, name='mark_as_paid'),
-    
-     path('attend/pyed/not/<int:id>/', views.mark_as_not_pyed, name='mark_as_not_pyed'),
-         
-
 
 
 # urls.py
@@ -54,8 +49,39 @@ path('pyment/<int:x>/<int:id>/', views.pyment, name='pyment'),
 
 
 
-    path('pyment/<int:id>/', views.mark_attendance_paid, name='mark_attendance_paid'),
-    path('pyment/all/<int:id>/',views.mark_all_attendance_paid, name='mark_all_attendance_paid'),
+
+
+
+    path('admin/list/' , views.employee_list_view , name="employee_list_view"),
+
+
+#
+
+  path('admin/attendance/<int:year>/<int:month>/<int:day>/', views.attendance_view_admin, name='attendance_view_admin'),
+    path('admin/paid/not/<int:id>/', views.mark_as_not_pyed, name='mark_as_not_pyed'),
+     path('admin/paid/<int:id>/', views.mark_as_paid, name='mark_as_paid'),
+
+    path('admin/pyment/<int:id>/', views.mark_attendance_paid, name='mark_attendance_paid'),
+    path('admin/pyment/all/<int:id>/',views.mark_all_attendance_paid, name='mark_all_attendance_paid'),
+
+
+
+
+
+      path('admin/attendance/delete/<int:id>/', views.delete_attendance, name='delete_attendance'),
+
+ 
+  path('admin/today/' , views.today_attaned_admin , name="today_attaned_admin"),
+      path('admin/today/add/' , views.add_today , name="add_today"),
+         path('admin/calendar/', views.calendar_view, name='calendar'), #clander view 
+            path('admin/add/' , views.add_employee , name="add_employe"),
+
+
+
+
+    
+         
+
 ]
 
 
