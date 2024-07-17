@@ -33,3 +33,7 @@ class TCForm(forms.Form):
             'placeholder': 'Search'
         })
     )
+
+
+class MarkPaidForm(forms.Form):
+    number_of_records = forms.IntegerField(label='Number of Records to Mark as Paid')

@@ -54,4 +54,9 @@ path('pyment/<int:x>/<int:id>/', views.pyment, name='pyment'),
 
 
 
+    path('pyment/<int:id>/', views.mark_attendance_paid, name='mark_attendance_paid'),
+    path('pyment/all/<int:id>/',views.mark_all_attendance_paid, name='mark_all_attendance_paid'),
 ]
+
+
+

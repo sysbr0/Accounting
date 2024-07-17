@@ -10,7 +10,7 @@ from django.shortcuts import render, get_object_or_404 , redirect
 from .models import Attendance
 from datetime import datetime
 from datetime import date
-from .forms import EmployeeForm ,  TCForm
+from .forms import EmployeeForm ,  TCForm , MarkPaidForm
 from django.contrib import messages
 from django.db.models import Count
 from django.contrib.auth import authenticate, login, logout
@@ -18,6 +18,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.utils.dateparse import parse_date
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user
+from django.db import transaction
 
 from .models import Employee
 
@@ -330,6 +331,7 @@ def mark_as_not_pyed(request, id):
 
 @login_required
 def pyment(request, id, x):
+    
     if request.method == 'POST':
         # Get the employee
         employee = get_object_or_404(Employee, id=id)
@@ -351,6 +353,47 @@ def pyment(request, id, x):
 
 
 
+def mark_attendance_paid(request, id):
+
+  
+    employee = get_object_or_404(Employee, pk=id)
+    attendance = Attendance.objects.filter(employee=employee)
+
+    unpaid_records = attendance.filter(ispyed=False)
+    peyed_record = attendance.filter(ispyed=True).order_by('-date')[:10]
+    if request.method == 'POST':
+        form = MarkPaidForm(request.POST)
+        if form.is_valid():
+            number_of_records = form.cleaned_data['number_of_records']
+            oldest_attendance_records = Attendance.objects.filter(employee=employee, ispyed=False).order_by('date')[:number_of_records]
+            
+            # Update the records in a separate step
+            with transaction.atomic():
+                for record in oldest_attendance_records:
+                    record.ispyed = True
+                    record.save()
+
+            return redirect('serch_result', id=employee.id)  # Redirect to the employee detail page
+    else:
+        form = MarkPaidForm()
+
+    context = {
+        'form': form, 
+        'employee': employee,
+        "unpaid_records":unpaid_records,
+        "peyed_record":peyed_record
+
+
+        
+        }
+
+    
+    return render(request, 'employe/pyment.html',  context)
+
+def mark_all_attendance_paid(request, id):
+    employee = get_object_or_404(Employee, pk=id)
+    Attendance.objects.filter(employee=employee, ispyed=False).update(ispyed=True)
+    return redirect('serch_result', id=employee.id)  # Redirect to the employee detail page
 
 
 
