@@ -1,11 +1,11 @@
-{% extends 'employeview.html' %} {% block content %} {% load static %} {% load
-custom_filters %}
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chat</title>
-    <link rel="stylesheet" href="{% static 'styles.css' %}" />
+    <link rel="stylesheet" href="styles.css" />
+    <!-- Link to your CSS file -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
       /* Ensure the chat container takes up the entire screen */
@@ -26,27 +26,21 @@ custom_filters %}
 
       .chat-header {
         display: flex;
+        justify-content: space-between;
         align-items: center;
         padding: 10px;
         border-bottom: 1px solid #ddd;
         background-color: #007bff;
         color: white;
-      }
-
-      .back-button {
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        padding: 8px 12px;
-        margin-right: 10px;
-        cursor: pointer;
-        font-size: 16px;
+        flex-shrink: 0; /* Prevent header from shrinking */
       }
 
       .chat-header h2 {
         margin: 0;
         font-size: 1.5em; /* Adjust font size for smaller screens */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
       .chat-box {
@@ -64,6 +58,7 @@ custom_filters %}
         border-top: 1px solid #ddd;
         background-color: #f9f9f9;
         box-sizing: border-box; /* Include padding in width */
+        flex-shrink: 0; /* Prevent form from shrinking */
       }
 
       .chat-input {
@@ -73,6 +68,7 @@ custom_filters %}
         border-radius: 4px;
         font-size: 16px;
         margin-right: 10px;
+        box-sizing: border-box; /* Include padding in width */
       }
 
       .chat-button {
@@ -82,6 +78,43 @@ custom_filters %}
         color: white;
         border-radius: 4px;
         cursor: pointer;
+        font-size: 16px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Add this to your existing styles for spinner animation */
+      .loading {
+        background-color: transparent;
+        cursor: not-allowed;
+        color: transparent; /* Hide the text */
+      }
+
+      .loading::after {
+        content: "";
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(0, 0, 0, 0.1);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .chat-button:disabled {
+        background-color: #0056b3;
+        cursor: not-allowed;
       }
 
       /* Style messages */
@@ -93,6 +126,7 @@ custom_filters %}
         box-sizing: border-box; /* Include padding in width */
         clear: both;
         display: inline-block;
+        word-wrap: break-word; /* Ensure long words break correctly */
       }
 
       .message.you {
@@ -158,9 +192,6 @@ custom_filters %}
 
     <div id="chat-container">
       <div class="chat-header">
-        <button class="back-button" onclick="history.back()">
-          &#9664; Back
-        </button>
         <h2>{{employee_info.name}}</h2>
       </div>
       <div id="chat-box" class="chat-box">
@@ -174,7 +205,7 @@ custom_filters %}
           placeholder="Type your message..."
           class="chat-input"
         />
-        <button type="submit" class="chat-button">Send</button>
+        <button type="submit" id="send-button" class="chat-button">Send</button>
       </form>
     </div>
 
@@ -183,6 +214,11 @@ custom_filters %}
         $("#chat-form").on("submit", function (event) {
           event.preventDefault();
           var message = $("#message").val();
+          var $button = $("#send-button");
+
+          // Add loading state
+          $button.addClass("loading").prop("disabled", true);
+
           $.ajax({
             type: "POST",
             url: "", // Add the URL to handle the chat request
@@ -201,10 +237,13 @@ custom_filters %}
               // Scroll to the bottom
               $("#chat-box").scrollTop($("#chat-box")[0].scrollHeight);
             },
+            complete: function () {
+              // Remove loading state
+              $button.removeClass("loading").prop("disabled", false);
+            },
           });
         });
       });
     </script>
   </body>
-  {% endblock %}
 </html>

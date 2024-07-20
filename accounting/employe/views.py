@@ -130,7 +130,7 @@ def chat_view(request, id):
         'attendance_info': attendance_info
     }
 
-    return render(request, 'employe/chat.html', context)
+    return render(request, 'chat.html', context)
 
 
 
