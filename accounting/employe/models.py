@@ -4,6 +4,7 @@ from datetime import date, timedelta
 # Create your models here.
 
 
+
 class Employee(models.Model):
     name = models.CharField(max_length=100)
     position = models.CharField(max_length=100 ,blank=True, null=True )
@@ -30,13 +31,12 @@ class Employee(models.Model):
         super(Employee, self).save(*args, **kwargs)
 
 
+    def __str__(self):
+        return f" {self.name } "
     
 
 
   
-
-    def __str__(self):
-        return f" {self.name } "
 
 class Attendance(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
@@ -79,7 +79,4 @@ class Attendance(models.Model):
         # Update the employee state after saving attendance
         self.employee.update_state()
         return self
-
-
-        
-
+   

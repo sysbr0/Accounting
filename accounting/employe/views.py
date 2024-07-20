@@ -5,12 +5,12 @@ from django.http import HttpResponse
 from django.utils.safestring import mark_safe
 import calendar
 from .models import Attendance, Employee
-from django.http import HttpResponseBadRequest
+
 from django.shortcuts import render, get_object_or_404 , redirect
 from .models import Attendance
 from datetime import datetime
 from datetime import date
-from .forms import EmployeeForm ,  TCForm , MarkPaidForm
+from .forms import EmployeeForm ,  TCForm , MarkPaidForm , AnalysisForm
 from django.contrib import messages
 from django.db.models import Count
 from django.contrib.auth import authenticate, login, logout
@@ -19,10 +19,12 @@ from django.utils.dateparse import parse_date
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user
 from django.db import transaction
-
+import json
 from .models import Employee
 
 from django.http import HttpResponseForbidden
+from django.http import JsonResponse
+
 
 from django.utils import timezone
 from calendar import Calendar
@@ -36,6 +38,104 @@ from users.forms import LogingForm
 
 
 from datetime import datetime, timedelta
+
+
+
+import google.generativeai as genai
+import os
+
+
+
+
+from django.views.decorators.csrf import csrf_exempt
+import json
+
+
+Gemini_API = os.getenv('Gemini_API')
+
+genai.configure(api_key=Gemini_API)
+
+# Create the model
+generation_config = {
+    "temperature": 0,
+    "top_p": 0.95,
+    "top_k": 64,
+    "max_output_tokens": 8192,
+    "response_mime_type": "text/plain",
+}
+
+model = genai.GenerativeModel(
+    model_name="gemini-1.5-flash",
+    generation_config=generation_config,
+    system_instruction="This is a company management system.",
+)
+
+
+
+
+def chat_view(request, id):
+    # Retrieve employee and attendance records
+    employee = get_object_or_404(Employee, id=id)
+    attendance_records = Attendance.objects.filter(employee=employee)
+
+    # Create arrays for employee and attendance information
+    employee_info = {
+        "name": employee.name,
+        "age": employee.age,
+        "position": employee.position,
+        "tc": employee.tc,
+        "title": employee.title,
+        "state": employee.state,
+    }
+
+    attendance_info = [
+        {
+            "date": record.date,
+            "status": record.status,
+            "is_paid": record.ispyed,
+        }
+        for record in attendance_records
+    ]
+
+    # Initialize chat session with predefined messages for context
+    chat_history = [
+        {"role": "user", "parts": [f"مرحبا انا اسمي  {employee.name}. رجاءا لا تتحدث الا باللغة العربية انا لا اجيد الإنجليزية "]},
+        {"role": "model", "parts": [f"مرحبا  {employee.name},  بالطبع سؤجيب بالغة لعربية ، كيف يمكنني مساعدتك اليوم  ?"]},
+        {"role": "user", "parts": ["اريد ان اعرف كم يوم لي في العمل سواء ايام مدفوقة او ايام غير مدفوعة ?"]},
+        {"role": "model", "parts": ["هل يمكنك ارسال المعلومات او البيانات "]},
+    ]
+
+    for record in attendance_info:
+        chat_history.append(
+            {"role": "model", "parts": [f"التاريخ: {record['date']}, الحالة : {record['status']}, حالة الدفع : {record['is_paid']}"]}
+        )
+
+    chat_session = model.start_chat(history=chat_history)
+
+    if request.method == 'POST':
+        user_input = request.POST.get('message', '')
+
+        # Send the user input to the model and get the response
+        response = chat_session.send_message(user_input)
+        model_response = response.text
+
+        # Append to history
+        chat_session.history.append({"role": "user", "parts": [user_input]})
+        chat_session.history.append({"role": "model", "parts": [model_response]})
+
+        return JsonResponse({'response': model_response})
+
+    context = {
+        'employee_info': employee_info,
+        'attendance_info': attendance_info
+    }
+
+    return render(request, 'chat.html', context)
+
+
+
+
+
 
 
 def calendar_view(request):
@@ -354,30 +454,36 @@ def mark_as_not_pyed(request, id):
 
 
 @login_required
-def pyment(request, id, x):
+def pyment(request):
+    email = request.user.email if request.user.is_authenticated else None
+
     
-    if request.method == 'POST':
-        # Get the employee
-        employee = get_object_or_404(Employee, id=id)
+
         
         # Fetch the oldest x attendance records for the employee
-        oldest_attendance = Attendance.objects.filter(employee=employee, ispyed=False).order_by('date')[:int(x)]
+    
+
+
+
+    attendance_counts = (Attendance.objects.filter(ispyed=False).values('employee__id', 'employee__name', 'employee__position').annotate(attendance_days=Count('date')).order_by('-attendance_days')
+    )
+    context = {
+        'attendance': attendance_counts,
+        'email': email,
+
+    }
         
-        # Process the form data to mark selected attendance records as paid
-        for attendance in oldest_attendance:
-            attendance.ispyed = True
-            attendance.save()
+
         
-        # Redirect back to the search results page
-        return redirect(reverse('serch_result', kwargs={'id': id}))
     
     # If not a POST request, render a template or handle the GET request as needed
-    return render(request, 'employe/pyment.html', {'employee_id': id, 'x': x})
+    return render(request, 'employe/pyment_list.html', context)
 
 
 
-
+@login_required
 def mark_attendance_paid(request, id):
+    email = request.user.email if request.user.is_authenticated else None
 
   
     employee = get_object_or_404(Employee, pk=id)
@@ -405,8 +511,8 @@ def mark_attendance_paid(request, id):
         'form': form, 
         'employee': employee,
         "unpaid_records":unpaid_records,
-        "peyed_record":peyed_record
-
+        "peyed_record":peyed_record,
+        "email":email,
 
         
         }
@@ -621,6 +727,10 @@ def add_attendance(request, id):
         messages.success(request, f"Attendance for {employee.name} has been added.")
 
     return redirect('add_today')
+
+
+
+
 
 
 

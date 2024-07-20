@@ -37,3 +37,13 @@ class TCForm(forms.Form):
 
 class MarkPaidForm(forms.Form):
     number_of_records = forms.IntegerField(label='Number of Records to Mark as Paid')
+
+
+
+class ChatForm(forms.Form):
+    user_input = forms.CharField(label='Your message', max_length=1000, widget=forms.Textarea)
+
+
+
+class AnalysisForm(forms.Form):
+    question = forms.CharField(label='Question', widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your question here'}))

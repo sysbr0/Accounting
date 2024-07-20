@@ -1,8 +1,18 @@
 import os
 from pathlib import Path
 
+
+from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
+
+
+
+
+load_dotenv()
+
+Gemini_API = os.getenv('Gemini_API')
 
 SECRET_KEY = "django-insecure-s^(bb6+=(mpboay^a5-nl@&+iqx0q9#u-^j=@++9u)*@2(ocxj"
 
@@ -50,6 +60,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+      
+
 ]
 CORS_ORIGIN_ALLOW_ALL = True
 

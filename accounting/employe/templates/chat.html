@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Chat</title>
+    <link rel="stylesheet" href="styles.css" />
+    <!-- Link to your CSS file -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+      /* Ensure the chat container takes up the entire screen */
+      #chat-container {
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        width: 100vw; /* Full width of viewport */
+        height: 100vh; /* Full height of viewport */
+        background-color: #fff;
+        border: none;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column; /* Stack header, chat box, and form vertically */
+        overflow: hidden;
+        z-index: 1000; /* Ensure the chat is on top */
+      }
+
+      .chat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        background-color: #007bff;
+        color: white;
+      }
+
+      .chat-header h2 {
+        margin: 0;
+      }
+
+      .chat-box {
+        flex: 1;
+        overflow-y: auto; /* Enable vertical scrolling */
+        padding: 10px;
+        box-sizing: border-box; /* Include padding in height */
+        display: flex;
+        flex-direction: column; /* Ensure messages stack vertically */
+      }
+
+      .chat-form {
+        display: flex;
+        padding: 10px;
+        border-top: 1px solid #ddd;
+        background-color: #f9f9f9;
+        box-sizing: border-box; /* Include padding in width */
+      }
+
+      .chat-input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 16px;
+        margin-right: 10px;
+      }
+
+      .chat-button {
+        padding: 10px 20px;
+        border: none;
+        background-color: #007bff;
+        color: white;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      /* Style messages */
+      .message {
+        margin: 5px 0;
+        padding: 10px;
+        border-radius: 5px;
+        max-width: 60%;
+        box-sizing: border-box; /* Include padding in width */
+        clear: both;
+        display: inline-block;
+      }
+
+      .message.you {
+        background-color: #007bff;
+        color: white;
+        text-align: right;
+        align-self: flex-end;
+      }
+
+      .message.ai {
+        background-color: #f1f1f1;
+        color: black;
+        text-align: left;
+        align-self: flex-start;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Chat with Gemini AI</h1>
+    </header>
+
+    <div id="chat-container">
+      <div class="chat-header">
+        <h2>{{employee_info.name}}</h2>
+      </div>
+      <div id="chat-box" class="chat-box">
+        <!-- Only user and AI messages will be displayed here -->
+      </div>
+      <form id="chat-form" class="chat-form">
+        <input
+          type="text"
+          id="message"
+          name="message"
+          placeholder="Type your message..."
+          class="chat-input"
+        />
+        <button type="submit" class="chat-button">Send</button>
+      </form>
+    </div>
+
+    <script>
+      $(document).ready(function () {
+        $("#chat-form").on("submit", function (event) {
+          event.preventDefault();
+          var message = $("#message").val();
+          $.ajax({
+            type: "POST",
+            url: "", // Add the URL to handle the chat request
+            data: {
+              message: message,
+              csrfmiddlewaretoken: "{{ csrf_token }}",
+            },
+            success: function (data) {
+              $("#chat-box").append(
+                '<div class="message you">' + message + "</div>"
+              );
+              $("#chat-box").append(
+                '<div class="message ai">' + data.response + "</div>"
+              );
+              $("#message").val("");
+              // Scroll to the bottom
+              $("#chat-box").scrollTop($("#chat-box")[0].scrollHeight);
+            },
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

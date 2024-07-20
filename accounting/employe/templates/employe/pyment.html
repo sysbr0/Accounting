@@ -4,17 +4,6 @@
 <h2 style="text-align: center; margin-top: 20px; color: #333">
   Mark Attendance Records as Paid for {{ employee.name }}
 </h2>
-<a
-  href="{% url 'mark_all_attendance_paid' employee.id %}"
-  style="
-    display: block;
-    text-align: center;
-    margin-bottom: 20px;
-    color: #007bff;
-    text-decoration: none;
-  "
-  >Mark All as Paid</a
->
 
 <form
   method="post"
@@ -120,6 +109,18 @@
       {% endfor %}
     </tbody>
   </table>
+
+  <a
+    href="{% url 'mark_all_attendance_paid' employee.id %}"
+    style="
+      display: block;
+      text-align: center;
+      margin-bottom: 20px;
+      color: #007bff;
+      text-decoration: none;
+    "
+    >دفع كامل الحساب
+  </a>
 </div>
 
 {% endblock %}

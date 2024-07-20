@@ -38,7 +38,7 @@ urlpatterns = [
 
 
 # urls.py
-path('pyment/<int:x>/<int:id>/', views.pyment, name='pyment'),
+path('admin/pyment/', views.pyment, name='pyment'),
 
 
 
@@ -66,6 +66,9 @@ path('pyment/<int:x>/<int:id>/', views.pyment, name='pyment'),
 
 
 
+# path('employ/<int:employee_id>/', views.employee_detail, name='employee_detail'),
+ 
+
 
 
       path('admin/attendance/delete/<int:id>/', views.delete_attendance, name='delete_attendance'),
@@ -75,6 +78,15 @@ path('pyment/<int:x>/<int:id>/', views.pyment, name='pyment'),
       path('admin/today/add/' , views.add_today , name="add_today"),
          path('admin/calendar/', views.calendar_view, name='calendar'), #clander view 
             path('admin/add/' , views.add_employee , name="add_employe"),
+
+
+       path('chat/<int:id>/', views.chat_view, name='chat_view'),
+
+
+
+
+
+            
 
 
 
