@@ -73,9 +73,95 @@ model = genai.GenerativeModel(
 
 
 
+def admin_chat(request):
+    name = request.user.email if request.user.is_authenticated else None
+
+
+
+    # Retrieve employee and attendance records
+    employee = Employee.objects.all()
+  
+    attendance_records = Attendance.objects.all()
+
+    # Create arrays for employee and attendance information
+    employee_info = [ {
+        "name": record.name,
+        "age": record.age,
+        "position": record.position,
+        "tc": record.tc,
+        "title": record.title,
+        "state": record.state,
+    }
+     for record in employee
+    ]
+
+    attendance_info = [
+        {
+            "employee": record.employee,
+            "date": record.date,
+            "status": record.status,
+            "is_paid": record.ispyed,
+        }
+        for record in attendance_records
+    ]
+
+    # Initialize chat session with predefined messages for context
+    chat_history = [
+
+
+        {"role": "user", "parts": [f" مرحبا ساقوم بارسال بعض البيانات عن العاملين لدي ولدي ايضا جدول  يعرض  ايام الجضور لكل شخص وهنالك  خيار يعرض اذا كان اليوم مدوفع او لا  اجب بللغة العربية حصرا "]},
+
+
+        {"role": "model", "parts": [f"مرحبا ,  بالطبع سؤجيب بالغة لعربية ، كيف يمكنني مساعدتك اليوم  ?"]},
+        {"role": "user", "parts": ["اريد ان اعرف كم يوم لي في العمل سواء ايام مدفوقة او ايام غير مدفوعة  لكن احرص على ان البيانات التي سترسلها ستكون عبارة عن تنسيق html ولا تنسى التنسيق فهو مهم جداا  css?"]},
+        {"role": "model", "parts": ["هل يمكنك ارسال المعلومات او البيانات "]},
+    ]
+
+    for record in attendance_info:
+        chat_history.append(
+            {"role": "user", "parts": [f"التاريخ: {record['date']}, الحالة : {record['status']}, حالة الدفع : {record['is_paid']}  العامل هو {record['employee']}"]}
+        )
+
+    for record in employee_info:
+        chat_history.append(
+            {"role": "user", "parts": [f"اسم العاملة : {record['name']}, الاسم بلانجليزية : {record['title']}, المعرف  : {record['tc']}"]}
+        )
+
+    
+
+    chat_session = model.start_chat(history=chat_history)
+
+    if request.method == 'POST':
+        user_input = request.POST.get('message', '')
+
+        # Send the user input to the model and get the response
+        response = chat_session.send_message(user_input)
+        model_response = response.text
+
+        # Append to history
+        chat_session.history.append({"role": "user", "parts": [user_input]})
+        chat_session.history.append({"role": "model", "parts": [model_response]})
+
+        return JsonResponse({'response': model_response})
+
+    context = {
+        'employee_info': employee_info,
+        'attendance_info': attendance_info,
+        "name" :name,
+    }
+
+    return render(request, 'chat.html', context)
+
+
+
+
+
+
 def chat_view(request, id):
     # Retrieve employee and attendance records
     employee = get_object_or_404(Employee, id=id)
+
+    
     attendance_records = Attendance.objects.filter(employee=employee)
 
     # Create arrays for employee and attendance information
@@ -87,9 +173,14 @@ def chat_view(request, id):
         "title": employee.title,
         "state": employee.state,
     }
+    name = employee_info['name']
+
+
 
     attendance_info = [
+
         {
+            
             "date": record.date,
             "status": record.status,
             "is_paid": record.ispyed,
@@ -127,10 +218,23 @@ def chat_view(request, id):
 
     context = {
         'employee_info': employee_info,
-        'attendance_info': attendance_info
+        'attendance_info': attendance_info,
+        "name" : name
     }
 
     return render(request, 'chat.html', context)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -395,12 +499,52 @@ def serch_result(request, id):
         from_date = parse_date(from_date)
         to_date = parse_date(to_date)
         attendance_records = Attendance.objects.filter(date__range=[from_date, to_date], employee=employee)
+        pyment_record = Attendance.objects.filter(date__range=[from_date, to_date], employee=employee , ispyed=True )
     else:
         attendance_records = Attendance.objects.filter(employee=employee)
+        pyment_record = Attendance.objects.filter(employee=employee , ispyed=True )
+
     
     attendance_count = attendance_records.values('employee__name').annotate(total_days=Count('date')).order_by('employee__name')
+    pyment_cont = pyment_record.values('employee__name').annotate(total_days=Count('date')).order_by('employee__name')
+
     unpaid_records = monthly_attendance.filter(ispyed=False)
     peyed_record = monthly_attendance.filter(ispyed=True).order_by('-date')[:5]
+    count_all = attendance_records.count()
+    count_pyed=pyment_record.count()
+
+
+    check_date = False
+
+    if from_date is not None:
+        check_date = True
+
+    
+
+
+    
+
+
+
+
+    total_paid_days = attendance_records.filter(ispyed=True).count()
+    total_unpaid_days = attendance_records.filter(ispyed=False).count()
+
+    difference = count_all - count_pyed 
+    if difference >1:
+
+        messages = "لديك %s يوم غير مدفوع" % difference
+
+        diffrence_check = True
+    elif difference == 0:
+         messages = "الحساب مغلق "
+         diffrence_check = False
+    else:
+        messages = "يوم  %s لنا عليك  " % difference
+
+
+
+
     context = {
         'employee': employee,
         'from_date': from_date,
@@ -408,8 +552,13 @@ def serch_result(request, id):
         'attendance': monthly_attendance,
         'attendance_records': attendance_records,
         'attendance_count': attendance_count,
+        "pyment_cont":pyment_cont,
+        "difference" : difference,
         'message': message,
+        "messages":messages,
         'check': cheking,
+        "check_date" :check_date,
+
         'calendar': month_days,
         'attendance_days': attendance_days,
         'attendance_status': attendance_status,
@@ -424,6 +573,7 @@ def serch_result(request, id):
         'unpaid_records': unpaid_records,
         'peyed_record' : peyed_record, 
         "email": email,
+        "diffrence_check":diffrence_check
 
 
 
@@ -465,7 +615,7 @@ def pyment(request):
 
 
 
-    attendance_counts = (Attendance.objects.filter(ispyed=False).values('employee__id', 'employee__name', 'employee__position').annotate(attendance_days=Count('date')).order_by('-attendance_days')
+    attendance_counts = (Attendance.objects.filter(ispyed=False).values('employee__id', 'employee__name', 'employee__position' ,"employee__age" ).annotate(attendance_days=Count('date')).order_by('-attendance_days')
     )
     context = {
         'attendance': attendance_counts,
@@ -536,6 +686,8 @@ def serch_resul(request, id):
     
     # Fetch all attendance records for the employee
     attendance_records = Attendance.objects.filter(employee=employee).order_by('-date')
+
+
     
     # Check if attendance was recorded today
    
@@ -570,11 +722,17 @@ def serch_resul(request, id):
         attendance_records = Attendance.objects.filter(date__range=[from_date, to_date], employee=employee)
     else:
         attendance_records = Attendance.objects.filter(employee=employee)
+    
+
+
+ 
+
+
 
     # Aggregate attendance count per employee
     attendance_count = attendance_records.values('employee__name').annotate(total_days=Count('date')).order_by('employee__name')
-
     context = {
+       
         'from_date': from_date,
         'to_date': to_date,
         'attendance': attendance_records,

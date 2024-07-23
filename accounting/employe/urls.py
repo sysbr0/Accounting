@@ -82,6 +82,10 @@ path('admin/pyment/', views.pyment, name='pyment'),
 
        path('chat/<int:id>/', views.chat_view, name='chat_view'),
 
+       path('chat/', views.admin_chat, name='admin_chat'),
+
+       
+
 
 
 

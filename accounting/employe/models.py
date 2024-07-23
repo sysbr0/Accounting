@@ -79,4 +79,5 @@ class Attendance(models.Model):
         # Update the employee state after saving attendance
         self.employee.update_state()
         return self
-   
+    def employe_id(self):
+     return self.employee.id 

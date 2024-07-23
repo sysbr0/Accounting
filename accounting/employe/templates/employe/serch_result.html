@@ -123,6 +123,14 @@
       background-color: red;
       color: #fff;
     }
+    .not-check-date{
+      display : none;
+    }
+    .check-date{
+      background-color: rgb(29, 185, 188);
+      color: #fff;
+
+    }
     .pyed {
       background-color: #0eb0eb !important; /* Highlight paid days */
 
@@ -290,6 +298,10 @@
   </form>
 </div>
 
+<ul class="map-list bordered">
+  <li class="{% if diffrence_check %}working-day text-center{% else %}no-check text-center{% endif %}" > <h5> عدد  الايام العمل  </h5></li>
+  
+  </ul>
 
 <table class="attendance-table">
   <thead>
@@ -310,11 +322,50 @@
   </tbody>
 </table>
 
+
+
+<ul class="map-list bordered">
+  <li class="{% if diffrence_check %}working-day text-center{% else %}no-check text-center{% endif %}" > <h5> عدد  الايام المدفوعة </h5></li>
+  
+  </ul>
+
+<table class="attendance-table">
+  <thead>
+    <tr class= "font-bold text-center">
+        <th  class= "font-bold text-center">العدد</th>
+      <th  class= "font-bold text-center">الاسم</th>
+    
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for count in pyment_cont %}
+    <tr class="black  font-bold text-center ">
+        <td class= "font-bold text-center"> {{ count.total_days}}</td>
+      <td class= "font-bold text-center">{{count.employee__name }}</td>
+    
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<ul class="map-list bordered">
+<li class="{% if diffrence_check %}working-day text-center{% else %}no-check text-center{% endif %}" > <h5>   {{ messages }} </h5></li>
+
+</ul>
+
+
+
+
+
+
 <div class="attendance-count">
-  <h5>  {{ from_date }}  عدد الايام من التاريخ </h5>
 
+  <ul class="map-list bordered">
+    <li class="{% if check_date %}check-date text-center{% else %}not-check-date text-center{% endif %}" > <h5>  {{ from_date }}  عدد الايام من التاريخ  </h5></li>
+    <li class="{% if check_date %}check-date text-center{% else %}not-check-date  text-center{% endif %}" > <h5>{{ to_date }}    الى تاريخ  </h5></li>
 
-  <h5>  {{ to_date }}  الى تاريخ </h5>
+    </ul>
+
 
 
 
