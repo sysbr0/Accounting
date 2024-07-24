@@ -140,8 +140,8 @@
   <div class="employe">
 
     <ul class="map-list bordered">
-      <li  class="{% if check %}working-day text-center{% else %}no-check text-center{% endif %}"> <h5> {{ employee.name }} {{employee.position }}</h5></li>
-
+      <li  class="{% if check %}working-day text-center{% else %}no-check text-center{% endif %}"> <h5> {{ employee.name }} {{employee.position }} </h5></li>
+      <li  class="{% if employee.state %}working-day text-center{% else %}no-check text-center{% endif %}"> <h5> {{ employee.state }} </h5></li>
       <li class="{% if check %}working-day text-center{% else %}no-check text-center{% endif %}" > <h5>   {{ message }} </h5></li>
 
 

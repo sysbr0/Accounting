@@ -27,7 +27,7 @@ urlpatterns = [
     path('from/to/', views.attendance_views, name='attendance_from_to'),
     path('search/', views.tc_input_view, name='tc_input_view'),
     
-    path('employee/<int:id>/', views.serch_result, name='serch_result'),
+    path('<int:id>/', views.serch_result, name='serch_result'),
      path('employe/<int:id>/', views.serch_resul, name='serch_resul'),
    
 

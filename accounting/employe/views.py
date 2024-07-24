@@ -531,7 +531,9 @@ def serch_result(request, id):
     total_unpaid_days = attendance_records.filter(ispyed=False).count()
 
     difference = count_all - count_pyed 
-    if difference >1:
+
+    diffrence_check = True
+    if difference >0:
 
         messages = "لديك %s يوم غير مدفوع" % difference
 

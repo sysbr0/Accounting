@@ -71,6 +71,9 @@ class Attendance(models.Model):
                 existing_attendance.save()
                 return existing_attendance
             
+
+
+            
             
         
         # If no existing attendance record, proceed with normal save
@@ -78,6 +81,17 @@ class Attendance(models.Model):
         
         # Update the employee state after saving attendance
         self.employee.update_state()
+
+
+
+        all_attendances_paid = Attendance.objects.filter(employee=self.employee, ispyed=False).exists()
+        if not all_attendances_paid:
+            self.employee.state = False
+            self.employee.save()
         return self
+    
+
+
+
     def employe_id(self):
      return self.employee.id 
