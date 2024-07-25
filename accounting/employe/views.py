@@ -850,7 +850,7 @@ def add_today(request):
     
     # Retrieve employees who have not attended today
     employees_not_attended_today = Employee.objects.exclude(
-        attendance__date=today,
+        attendance__date=today
          # Assuming each attendance is linked to a user
     ).order_by('-state')
     
@@ -861,6 +861,8 @@ def add_today(request):
     }
 
     return render(request, 'attendance/adding.html', context)
+
+
 
 
 
