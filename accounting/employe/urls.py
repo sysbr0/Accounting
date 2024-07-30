@@ -41,6 +41,12 @@ urlpatterns = [
 path('admin/pyment/', views.pyment, name='pyment'),
 
 
+    path('download/employee-csv/', views.download_employee_csv, name='download_employee_csv'),
+        path('download/attendance-csv/', views.download_attendance_csv, name='download_attendance_csv'),
+
+
+
+
 
     
     
@@ -87,6 +93,7 @@ path('admin/pyment/', views.pyment, name='pyment'),
        
 
 
+    path('export_attendance_csv/', views.export_attendance_csv, name='export_attendance_csv'),
 
 
 

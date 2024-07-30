@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.utils.safestring import mark_safe
 import calendar
 from .models import Attendance, Employee
-
+import csv
 from django.shortcuts import render, get_object_or_404 , redirect
 from .models import Attendance
 from datetime import datetime
@@ -226,9 +226,63 @@ def chat_view(request, id):
 
 
 
+def download_employee_csv(request):
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type='text/csv; charset=utf-8-sig')
+
+   
+    response['Content-Disposition'] = 'attachment; filename="employees.csv"'
+
+    # Create a CSV writer
+    writer = csv.writer(response)
+
+    # Write the header row
+    writer.writerow(['Id','Name', 'Position', 'Age', 'TC', 'Created At', 'Created By', 'Title', 'State'])
+
+    # Write the data rows
+    employees = Employee.objects.all()
+    for employee in employees:
+        writer.writerow([
+            employee.id,
+            employee.name,
+            employee.position,
+            employee.age,
+            employee.tc,
+            employee.created_at,
+            employee.created_by,
+            employee.title,
+            employee.state,
+        ])
+
+    return response
 
 
 
+
+
+
+
+
+
+def download_attendance_csv(request):
+    response = HttpResponse(content_type='text/csv; charset=utf-8-sig')
+    response['Content-Disposition'] = 'attachment; filename="attendance.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Employee ID', 'Employee Name', 'Date', 'Created By', 'Status', 'Is Paid'])
+
+    attendances = Attendance.objects.all()
+    for attendance in attendances:
+        writer.writerow([
+            attendance.employee.id,
+            attendance.get_employee_name(),
+            attendance.date,
+            attendance.created_by,  # Assuming AUTH_USER_MODEL has a 'username' field
+            attendance.status,
+            attendance.ispyed,
+        ])
+
+    return response
 
 
 
@@ -976,3 +1030,20 @@ def attendance_views(request):
 
 
 
+
+def export_attendance_csv(request):
+    # Create an HTTP response with CSV content type
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="attendance_records.csv"'
+
+    # Create a CSV writer object
+    writer = csv.writer(response)
+    
+    # Write the header row
+    writer.writerow(['ID', 'Employee', 'Date', 'Created By', 'Status', 'Is Paid'])
+
+    # Write data rows
+    for record in Attendance.objects.all().values_list('id', 'employee', 'date', 'created_by', 'status', 'ispyed'):
+        writer.writerow(record)
+
+    return response
