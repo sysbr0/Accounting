@@ -1,0 +1,31 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container mt-5">
+  <h2>Money Sources</h2>
+  <a href="{% url 'salary_create' %}" class="btn btn-primary mb-3"
+    >Add New Money Source</a
+  >
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>employee</th>
+        <th>amount</th>
+        <th>effective_date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for moneysource in form %}
+      <tr>
+        <td>{{ moneysource.employee }}</td>
+        <td>{{ moneysource.amount }}</td>
+        <td>{{ moneysource.effective_date }}</td>
+        <td>
+          <a href="#" class="btn btn-warning btn-sm">Edit</a>
+          <a href="#" class="btn btn-danger btn-sm">Delete</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

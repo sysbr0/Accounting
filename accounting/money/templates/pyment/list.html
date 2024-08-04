@@ -1,0 +1,31 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container mt-5">
+  <h2>Money Sources</h2>
+  <a href="#" class="btn btn-primary mb-3">Add New Money Source</a>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>date</th>
+        <th>note</th>
+        <th>Source Type</th>
+        <th>amount</th>
+        <th>action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for i in GeneralPayment %}
+      <tr>
+        <td>{{ i.date }}</td>
+        <td>{{ i.note }}</td>
+        <td>{{ i.source }}</td>
+        <td>{{ i.amount }}</td>
+        <td>
+          <a href="#" class="btn btn-warning btn-sm">Edit</a>
+          <a href="#" class="btn btn-danger btn-sm">Delete</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
