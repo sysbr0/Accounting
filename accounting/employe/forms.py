@@ -55,13 +55,15 @@ class AnalysisForm(forms.Form):
 
 
 
-
 class SalaryForm(forms.ModelForm):
      class Meta:
         model = Salary
-        fields = ['employee', 'amount']
+        fields = [ 'amount' , "effective_date"]
+        widgets = {
+            'effective_date': forms.DateInput(attrs={'type': 'date'}),
+        }
 
-
+  
 
 
 class EmployeePaymentForm(forms.ModelForm):

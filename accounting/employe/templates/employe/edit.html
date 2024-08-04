@@ -71,7 +71,11 @@
             <td>{{ moneysource.amount }}</td>
             <td>{{ moneysource.effective_date }}</td>
             <td>
-              <a href="#" class="btn btn-warning btn-sm">Edit</a>
+              <a
+                href="{% url 'salary_update_view' employee.id moneysource.pk %}"
+                class="btn btn-warning btn-sm"
+                >Edit</a
+              >
               <a href="#" class="btn btn-danger btn-sm">Delete</a>
             </td>
           </tr>
@@ -79,7 +83,9 @@
         </tbody>
       </table>
 
-      <a href="{% url 'salary_create' %}" class="btn btn-primary mb-3"
+      <a
+        href="{% url 'salary_create' employee.id  %}"
+        class="btn btn-primary mb-3"
         >Add New Money Source</a
       >
     </div>

@@ -103,7 +103,8 @@ path('admin/pyment/', views.pyment, name='pyment'),
 
 # salory 
 
-path('admin/salary/add/', views.salary_create, name="salary_create") , 
+path('admin/salary/add/<int:id>', views.salary_create, name="salary_create") , 
+path('admin/salary/edit/<int:id>/<int:pk>/', views.salary_update_view, name="salary_update_view") , 
 path('admin/salary/', views.salary_list, name="salary_list") , 
 
 path('admin/pyment/add/<int:id>/', views.employee_payment_view, name="employee_payment_view") , 

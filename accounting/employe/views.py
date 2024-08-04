@@ -1299,15 +1299,48 @@ def salary_list(request):
     form = Salary.objects.all()
     return render(request, 'salary/list.html', {'form': form})
 
-# Create View
-def salary_create(request):
+
+
+def salary_create(request, id):
+    email = request.user.email if request.user.is_authenticated else None
+
+    employee = Employee.objects.get(id=id)
     if request.method == 'POST':
         form = SalaryForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect(reverse('salary_list'))
+            salary = form.save(commit=False)
+            salary.employee = employee
+            salary.save()
+            messages.success(request, 'Salary added successfully!')
+            return redirect('edit_employee', id=employee.id)
     else:
         form = SalaryForm()
-    return render(request, 'salary/add.html', {'form': form})
+
+    last_salaries = Salary.objects.filter(employee=employee).order_by('-effective_date')
+    context = {
+        'employee': employee,
+        'form': form,
+        'last_salaries': last_salaries,
+        'email': email
+    }
+    return render(request, 'salary/add.html', context)
 
 
+ 
+
+def salary_update_view(request, id , pk):
+
+    employee = Employee.objects.get(id=id)
+    email = request.user.email if request.user.is_authenticated else None
+    # Fetch the Salary object to be updated
+    salary = get_object_or_404(Salary, pk=pk)
+    
+    if request.method == 'POST':
+        form = SalaryForm(request.POST, instance=salary)
+        if form.is_valid():
+            form.save()
+            return redirect('edit_employee', id=employee.id)  # Redirect to the list view or another page after successful update
+    else:
+        form = SalaryForm(instance=salary)
+
+    return render(request, 'salary/edit.html', {'form': form ,"email" :email , "employee" : employee})
